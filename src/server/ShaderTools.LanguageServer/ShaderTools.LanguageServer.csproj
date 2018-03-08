@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" version="2.1.1-beta" />
+    <PackageReference Include="System.CommandLine" Version="0.1.0-preview2-180220-2" />
     <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
     <ProjectReference Include="..\ShaderTools.CodeAnalysis.Hlsl.Features\ShaderTools.CodeAnalysis.Hlsl.Features.csproj" />

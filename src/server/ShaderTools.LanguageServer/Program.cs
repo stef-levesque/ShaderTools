@@ -1,10 +1,11 @@
 ﻿using System;
+using System.CommandLine;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using CommandLine;
+using ShaderTools.LanguageServer.Protocol.Utilities;
 
 namespace ShaderTools.LanguageServer
 {
@@ -12,51 +13,57 @@ namespace ShaderTools.LanguageServer
     {
         public static int Main(string[] args)
         {
-            return Parser.Default.ParseArguments<ProgramOptions>(args)
-                .MapResult(options =>
+            var waitForDebugger = false;
+            string logFilePath = null;
+            var logLevel = LogLevel.Normal;
+
+            ArgumentSyntax.Parse(args, syntax =>
+            {
+                syntax.DefineOption("waitfordebugger", ref waitForDebugger, false, "Set whether to wait for the debugger or not.");
+                syntax.DefineOption("logfilepath", ref logFilePath, true, "Fully qualified path to the log file.");
+                syntax.DefineOption("loglevel", ref logLevel, x => Enum.Parse<LogLevel>(x), false, "Logging level.");
+            });
+
+            EditorServicesHost editorServicesHost;
+            try
+            {
+                editorServicesHost = new EditorServicesHost(waitForDebugger);
+
+                var languageServicePort = GetAvailablePort();
+                if (languageServicePort == null)
                 {
-                    EditorServicesHost editorServicesHost;
-                    try
-                    {
-                        editorServicesHost = new EditorServicesHost(options.WaitForDebugger);
+                    throw new Exception("Could not find an available port");
+                }
 
-                        var languageServicePort = GetAvailablePort();
-                        if (languageServicePort == null)
-                        {
-                            throw new Exception("Could not find an available port");
-                        }
+                editorServicesHost.StartLogging(logFilePath, logLevel);
+                editorServicesHost.StartLanguageService(languageServicePort.Value);
 
-                        editorServicesHost.StartLogging(options.LogFilePath, options.LogLevel);
-                        editorServicesHost.StartLanguageService(languageServicePort.Value);
+                Console.WriteLine(SerializeToJson(new ProgramStartResult
+                {
+                    Status = "started",
+                    Channel = "tcp",
+                    LanguageServicePort = languageServicePort.Value
+                }));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("ShaderTools Editor Services host initialization failed, terminating.");
+                Console.Error.WriteLine(ex);
+                return 2;
+            }
 
-                        Console.WriteLine(SerializeToJson(new ProgramStartResult
-                        {
-                            Status = "started",
-                            Channel = "tcp",
-                            LanguageServicePort = languageServicePort.Value
-                        }));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.WriteLine("ShaderTools Editor Services host initialization failed, terminating.");
-                        Console.Error.WriteLine(ex);
-                        return 2;
-                    }
+            try
+            {
+                editorServicesHost.WaitForCompletion();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Caught error while waiting for Editor Services host to complete.");
+                Console.Error.WriteLine(ex);
+                return 3;
+            }
 
-                    try
-                    {
-                        editorServicesHost.WaitForCompletion();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Error.WriteLine("Caught error while waiting for Editor Services host to complete.");
-                        Console.Error.WriteLine(ex);
-                        return 3;
-                    }
-
-                    return 0;
-                },
-                errors => 1);
+            return 0;
         }
 
         private static readonly Random Random = new Random();
