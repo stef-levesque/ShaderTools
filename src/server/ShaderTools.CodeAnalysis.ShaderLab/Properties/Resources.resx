@@ -141,6 +141,9 @@
   <data name="NumberTooLarge" xml:space="preserve">
     <value>The number '{0}' is too large.</value>
   </data>
+  <data name="TokenExpected" xml:space="preserve">
+    <value>Found '{0}' but expected '{1}'.</value>
+  </data>
   <data name="TokenExpectedMultipleChoices" xml:space="preserve">
     <value>Found '{0}' but expected one of the following: {1}.</value>
   </data>
