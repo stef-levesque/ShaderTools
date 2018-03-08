@@ -5,8 +5,7 @@ import path = require('path');
 export let HlslLanguageId = 'hlsl';
 export let ShaderLabLanguageId = 'shaderlab';
 
-//export let LanguageIds = [HlslLanguageId, ShaderLabLanguageId];
-export let LanguageIds = [HlslLanguageId];
+export let LanguageIds = [HlslLanguageId, ShaderLabLanguageId];
 
 export let ShaderToolsSettingsName = "shadertools";
 
