@@ -31,13 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.CodeAnalysis.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.CodeAnalysis.Workspaces", "ShaderTools.CodeAnalysis.Workspaces\ShaderTools.CodeAnalysis.Workspaces.csproj", "{81A8EE6A-6DD7-48C2-93E4-8D4A57DF73DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.CodeAnalysis.Workspaces.Desktop", "ShaderTools.CodeAnalysis.Workspaces.Desktop\ShaderTools.CodeAnalysis.Workspaces.Desktop.csproj", "{17B2D680-7E23-41DD-9B3C-58ACC2C5A8B0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.LanguageServer", "ShaderTools.LanguageServer\ShaderTools.LanguageServer.csproj", "{29058D8C-76D0-4DD1-A6F5-247BE44EB888}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.LanguageServer.Protocol", "ShaderTools.LanguageServer.Protocol\ShaderTools.LanguageServer.Protocol.csproj", "{1D106B33-37F9-4354-B24E-D3DA9F8D06E3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.LanguageServer.Protocol.Hlsl", "ShaderTools.LanguageServer.Protocol.Hlsl\ShaderTools.LanguageServer.Protocol.Hlsl.csproj", "{BA2A035E-543E-4319-85A6-8FBDF0891B63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.Testing", "ShaderTools.Testing\ShaderTools.Testing.csproj", "{71E5E793-D56C-4792-B301-14B18D12859A}"
 EndProject
@@ -103,10 +99,6 @@ Global
 		{81A8EE6A-6DD7-48C2-93E4-8D4A57DF73DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81A8EE6A-6DD7-48C2-93E4-8D4A57DF73DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81A8EE6A-6DD7-48C2-93E4-8D4A57DF73DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17B2D680-7E23-41DD-9B3C-58ACC2C5A8B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17B2D680-7E23-41DD-9B3C-58ACC2C5A8B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17B2D680-7E23-41DD-9B3C-58ACC2C5A8B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17B2D680-7E23-41DD-9B3C-58ACC2C5A8B0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29058D8C-76D0-4DD1-A6F5-247BE44EB888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29058D8C-76D0-4DD1-A6F5-247BE44EB888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29058D8C-76D0-4DD1-A6F5-247BE44EB888}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -115,10 +107,6 @@ Global
 		{1D106B33-37F9-4354-B24E-D3DA9F8D06E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D106B33-37F9-4354-B24E-D3DA9F8D06E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D106B33-37F9-4354-B24E-D3DA9F8D06E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA2A035E-543E-4319-85A6-8FBDF0891B63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA2A035E-543E-4319-85A6-8FBDF0891B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA2A035E-543E-4319-85A6-8FBDF0891B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA2A035E-543E-4319-85A6-8FBDF0891B63}.Release|Any CPU.Build.0 = Release|Any CPU
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Release|Any CPU.ActiveCfg = Release|Any CPU

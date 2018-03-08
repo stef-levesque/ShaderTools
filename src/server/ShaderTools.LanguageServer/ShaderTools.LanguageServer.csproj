@@ -11,7 +11,6 @@
     <ProjectReference Include="..\ShaderTools.CodeAnalysis.Hlsl.Workspaces\ShaderTools.CodeAnalysis.Hlsl.Workspaces.csproj" />
     <ProjectReference Include="..\ShaderTools.CodeAnalysis.ShaderLab.Features\ShaderTools.CodeAnalysis.ShaderLab.Features.csproj" />
     <ProjectReference Include="..\ShaderTools.CodeAnalysis.ShaderLab.Workspaces\ShaderTools.CodeAnalysis.ShaderLab.Workspaces.csproj" />
-    <ProjectReference Include="..\ShaderTools.LanguageServer.Protocol.Hlsl\ShaderTools.LanguageServer.Protocol.Hlsl.csproj" />
     <ProjectReference Include="..\ShaderTools.LanguageServer.Protocol\ShaderTools.LanguageServer.Protocol.csproj" />
   </ItemGroup>
 </Project>
