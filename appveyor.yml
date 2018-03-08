@@ -1,0 +1,13 @@
+os: Visual Studio 2017
+
+assembly_info:
+  patch: false
+
+configuration:
+  - Release
+
+build_script:
+  - ps: .\build.ps1
+
+test: off
+skip_tags: true
