@@ -72,7 +72,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// <param name="options">Optional options that override the default options.</param>
         /// <param name="cancellationToken"></param>
         public abstract Task<CompletionList> GetCompletionsAsync(
-            Document document,
+            LogicalDocument document,
             int caretPosition,
             CompletionTrigger trigger = default(CompletionTrigger),
             ImmutableHashSet<string> roles = null,
@@ -86,7 +86,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// <param name="item">The item to get the description for.</param>
         /// <param name="cancellationToken"></param>
         public virtual Task<CompletionDescription> GetDescriptionAsync(
-            Document document,
+            LogicalDocument document,
             CompletionItem item,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -103,7 +103,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// This value is null when the commit was caused by the [TAB] or [ENTER] keys.</param>
         /// <param name="cancellationToken"></param>
         public virtual Task<CompletionChange> GetChangeAsync(
-            Document document,
+            LogicalDocument document,
             CompletionItem item,
             char? commitCharacter = null,
             CancellationToken cancellationToken = default(CancellationToken))
@@ -120,7 +120,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// be filtered against.
         /// </summary>
         public virtual ImmutableArray<CompletionItem> FilterItems(
-            Document document,
+            LogicalDocument document,
             ImmutableArray<CompletionItem> items,
             string filterText)
         {

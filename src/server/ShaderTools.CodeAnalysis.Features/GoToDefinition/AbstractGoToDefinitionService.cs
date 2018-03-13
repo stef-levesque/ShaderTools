@@ -11,7 +11,7 @@ namespace ShaderTools.CodeAnalysis.GoToDefinition
 {
     internal abstract class AbstractGoToDefinitionService : IGoToDefinitionService
     {
-        public async Task<ImmutableArray<DefinitionItem>> FindDefinitionsAsync(Document document, int position, CancellationToken cancellationToken)
+        public async Task<ImmutableArray<DefinitionItem>> FindDefinitionsAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             var syntacticDefinitions = await GetSyntacticDefinitionsAsync(document, position, cancellationToken);
             if (!syntacticDefinitions.IsEmpty)
@@ -42,12 +42,12 @@ namespace ShaderTools.CodeAnalysis.GoToDefinition
             return ImmutableArray.Create(symbol.ToDefinitionItem(workspace));
         }
 
-        protected virtual Task<ImmutableArray<DefinitionItem>> GetSyntacticDefinitionsAsync(Document document, int position, CancellationToken cancellationToken)
+        protected virtual Task<ImmutableArray<DefinitionItem>> GetSyntacticDefinitionsAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             return Task.FromResult(ImmutableArray<DefinitionItem>.Empty);
         }
 
-        private async Task<ISymbol> FindSymbolAsync(Document document, int position, CancellationToken cancellationToken)
+        private async Task<ISymbol> FindSymbolAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             if (!document.SupportsSemanticModel)
             {

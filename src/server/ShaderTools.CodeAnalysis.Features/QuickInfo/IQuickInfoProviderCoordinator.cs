@@ -6,6 +6,6 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
 {
     internal interface IQuickInfoProviderCoordinator
     {
-        Task<(QuickInfoItem, IQuickInfoProvider)> GetItemAsync(Document document, int position, CancellationToken cancellationToken);
+        Task<(QuickInfoItem, IQuickInfoProvider)> GetItemAsync(LogicalDocument document, int position, CancellationToken cancellationToken);
     }
 }

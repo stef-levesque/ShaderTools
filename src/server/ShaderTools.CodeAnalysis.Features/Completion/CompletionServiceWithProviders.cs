@@ -173,7 +173,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
         public override async Task<CompletionList> GetCompletionsAsync(
-            Document document,
+            LogicalDocument document,
             int caretPosition,
             CompletionTrigger trigger,
             ImmutableHashSet<string> roles,
@@ -183,7 +183,7 @@ namespace ShaderTools.CodeAnalysis.Completion
             var text = document.SourceText;
             var defaultItemSpan = this.GetDefaultCompletionListSpan(text, caretPosition);
 
-            options = options ?? await document.GetOptionsAsync(cancellationToken).ConfigureAwait(false);
+            options = options ?? await document.Parent.GetOptionsAsync(cancellationToken).ConfigureAwait(false);
             var providers = GetFilteredProviders(roles, trigger, options);
 
             var completionProviderToIndex = GetCompletionProviderToIndex(providers);
@@ -266,7 +266,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
         private async Task<ImmutableArray<CompletionContext>> ComputeNonEmptyCompletionContextsAsync(
-            Document document, int caretPosition, CompletionTrigger trigger,
+            LogicalDocument document, int caretPosition, CompletionTrigger trigger,
             OptionSet options, TextSpan defaultItemSpan,
             ImmutableArray<CompletionProvider> providers,
             CancellationToken cancellationToken)
@@ -388,7 +388,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         // Internal for testing purposes only.
         internal async Task<CompletionContext> GetContextAsync(
             CompletionProvider provider,
-            Document document,
+            LogicalDocument document,
             int position,
             CompletionTrigger triggerInfo,
             OptionSet options,
@@ -401,7 +401,7 @@ namespace ShaderTools.CodeAnalysis.Completion
 
         private async Task<CompletionContext> GetContextAsync(
             CompletionProvider provider,
-            Document document,
+            LogicalDocument document,
             int position,
             CompletionTrigger triggerInfo,
             OptionSet options,
@@ -421,7 +421,7 @@ namespace ShaderTools.CodeAnalysis.Completion
             return context;
         }
 
-        public override Task<CompletionDescription> GetDescriptionAsync(Document document, CompletionItem item, CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<CompletionDescription> GetDescriptionAsync(LogicalDocument document, CompletionItem item, CancellationToken cancellationToken = default(CancellationToken))
         {
             var provider = GetProvider(item);
             if (provider != null)
@@ -459,7 +459,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
         public override async Task<CompletionChange> GetChangeAsync(
-            Document document, CompletionItem item, char? commitKey, CancellationToken cancellationToken)
+            LogicalDocument document, CompletionItem item, char? commitKey, CancellationToken cancellationToken)
         {
             var provider = GetProvider(item);
             if (provider != null)

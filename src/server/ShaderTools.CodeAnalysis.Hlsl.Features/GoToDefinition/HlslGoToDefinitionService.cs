@@ -13,7 +13,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.GoToDefinition
     [ExportLanguageService(typeof(IGoToDefinitionService), LanguageNames.Hlsl)]
     internal sealed class HlslGoToDefinitionService : AbstractGoToDefinitionService
     {
-        protected override async Task<ImmutableArray<DefinitionItem>> GetSyntacticDefinitionsAsync(Document document, int position, CancellationToken cancellationToken)
+        protected override async Task<ImmutableArray<DefinitionItem>> GetSyntacticDefinitionsAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
             var sourceLocation = syntaxTree.MapRootFilePosition(position);

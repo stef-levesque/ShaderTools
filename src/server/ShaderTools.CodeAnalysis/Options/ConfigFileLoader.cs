@@ -37,6 +37,7 @@ namespace ShaderTools.CodeAnalysis.Options
 
                 HlslAdditionalIncludeDirectories = configFiles
                     .SelectMany(x => x.GetAbsoluteHlslAdditionalIncludeDirectories())
+                    .Union(new[] { @"C:\Users\Tim\Downloads\builtin_shaders-2017.3.1f1\CGIncludes" })
                     .Distinct()
                     .ToList()
             };

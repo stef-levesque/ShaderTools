@@ -22,6 +22,6 @@ namespace ShaderTools.CodeAnalysis.SignatureHelp
         /// <summary>
         /// Returns valid signature help items at the specified position in the document.
         /// </summary>
-        Task<SignatureHelpItems> GetItemsAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken);
+        Task<SignatureHelpItems> GetItemsAsync(LogicalDocument document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken);
     }
 }

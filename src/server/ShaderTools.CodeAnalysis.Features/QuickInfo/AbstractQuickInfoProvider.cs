@@ -11,7 +11,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
     internal abstract class AbstractQuickInfoProvider : IQuickInfoProvider
     {
         public async Task<QuickInfoItem> GetItemAsync(
-            Document document,
+            LogicalDocument document,
             int position,
             CancellationToken cancellationToken)
         {
@@ -49,7 +49,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
         }
 
         private async Task<QuickInfoItem> GetQuickInfoItemAsync(
-            Document document,
+            LogicalDocument document,
             SyntaxTreeBase syntaxTree,
             ISyntaxToken token,
             SourceLocation sourceLocation,
@@ -69,6 +69,6 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
             return null;
         }
 
-        protected abstract Task<QuickInfoContent> BuildContentAsync(Document document, ISyntaxToken token, CancellationToken cancellationToken);
+        protected abstract Task<QuickInfoContent> BuildContentAsync(LogicalDocument document, ISyntaxToken token, CancellationToken cancellationToken);
     }
 }

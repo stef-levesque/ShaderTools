@@ -7,7 +7,7 @@ namespace ShaderTools.CodeAnalysis.Navigation
 {
     internal static partial class NavigableItemFactory
     {
-        public static INavigableItem GetItemFromDeclaredSymbol(ISymbol declaredSymbol, Document document, SourceFileSpan sourceFileSpan)
+        public static INavigableItem GetItemFromDeclaredSymbol(ISymbol declaredSymbol, LogicalDocument document, SourceFileSpan sourceFileSpan)
         {
             return new DeclaredSymbolNavigableItem(document, declaredSymbol, sourceFileSpan);
         }

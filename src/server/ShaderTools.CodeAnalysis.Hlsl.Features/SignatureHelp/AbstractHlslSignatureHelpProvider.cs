@@ -16,7 +16,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.SignatureHelp
     internal abstract class AbstractHlslSignatureHelpProvider<TNode> : AbstractSignatureHelpProvider
         where TNode : SyntaxNode
     {
-        protected sealed override async Task<SignatureHelpItems> GetItemsWorkerAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken)
+        protected sealed override async Task<SignatureHelpItems> GetItemsWorkerAsync(LogicalDocument document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken)
         {
             var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 

@@ -18,11 +18,12 @@ namespace ShaderTools.CodeAnalysis.FindUsages
             var tags = ImmutableArray<string>.Empty; // GlyphTags.GetTags(definition.GetGlyph());
             var sourceLocations = ArrayBuilder<DocumentSpan>.GetInstance();
 
+            var document = workspace.CurrentDocuments.GetLogicalDocument(definition.SourceTree);
+
             foreach (var location in definition.Locations)
             {
                 var sourceFileSpan = definition.SourceTree.GetSourceFileSpan(location);
-
-                var document = workspace.CurrentDocuments.GetDocument(definition.SourceTree);
+    
                 if (document != null)
                 {
                     var documentLocation = new DocumentSpan(document, sourceFileSpan);

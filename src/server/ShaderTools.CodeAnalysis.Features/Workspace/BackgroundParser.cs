@@ -3,8 +3,6 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using ShaderTools.CodeAnalysis;
-using ShaderTools.CodeAnalysis.Host;
 using ShaderTools.Utilities.Threading;
 
 namespace ShaderTools.CodeAnalysis.Host
@@ -132,7 +130,13 @@ namespace ShaderTools.CodeAnalysis.Host
             var cancellationToken = cancellationTokenSource.Token;
 
             var task = _taskScheduler.ScheduleTask(
-                () => document.GetSyntaxTreeAsync(cancellationToken),
+                async () =>
+                {
+                    foreach (var logicalDocument in document.LogicalDocuments)
+                    {
+                        await logicalDocument.GetSyntaxTreeAsync(cancellationToken);
+                    }
+                },
                 "BackgroundParser.ParseDocumentAsync",
                 cancellationToken);
 

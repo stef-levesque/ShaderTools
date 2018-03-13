@@ -22,7 +22,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// <summary>
         /// The document that completion was invoked within.
         /// </summary>
-        public Document Document { get; }
+        public LogicalDocument Document { get; }
 
         /// <summary>
         /// The caret position when completion was triggered.
@@ -75,7 +75,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// </summary>
         public CompletionContext(
             CompletionProvider provider,
-            Document document,
+            LogicalDocument document,
             int position,
             TextSpan defaultSpan,
             CompletionTrigger trigger,

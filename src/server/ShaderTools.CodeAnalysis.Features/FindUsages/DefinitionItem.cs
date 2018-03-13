@@ -79,9 +79,6 @@ namespace ShaderTools.CodeAnalysis.FindUsages
             DisplayIfNoReferences = displayIfNoReferences;
         }
 
-        public abstract bool CanNavigateTo();
-        public abstract bool TryNavigateTo();
-
         public static DefinitionItem Create(
             ImmutableArray<string> tags,
             ImmutableArray<TaggedText> displayParts,

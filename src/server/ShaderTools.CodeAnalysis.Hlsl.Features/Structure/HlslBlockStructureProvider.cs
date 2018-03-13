@@ -10,7 +10,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Structure
     [ExportLanguageService(typeof(IBlockStructureProvider), LanguageNames.Hlsl)]
     internal sealed class HlslBlockStructureProvider : IBlockStructureProvider
     {
-        public async Task<ImmutableArray<BlockSpan>> ProvideBlockStructureAsync(Document document, CancellationToken cancellationToken)
+        public async Task<ImmutableArray<BlockSpan>> ProvideBlockStructureAsync(LogicalDocument document, CancellationToken cancellationToken)
         {
             var results = ImmutableArray.CreateBuilder<BlockSpan>();
             var outliningVisitor = new OutliningVisitor(document.SourceText, results, cancellationToken);

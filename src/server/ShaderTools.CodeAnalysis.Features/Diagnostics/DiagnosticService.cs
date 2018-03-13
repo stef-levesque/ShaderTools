@@ -37,21 +37,24 @@ namespace ShaderTools.CodeAnalysis.Diagnostics
             if (!options.GetOption(DiagnosticsOptions.EnableErrorReporting))
                 return ImmutableArray<MappedDiagnostic>.Empty;
 
-            var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            if (syntaxTree == null)
-                return ImmutableArray<MappedDiagnostic>.Empty;
-
             var result = ImmutableArray.CreateBuilder<MappedDiagnostic>();
 
-            foreach (var diagnostic in syntaxTree.GetDiagnostics())
-                result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SyntaxParsing));
+            foreach (var logicalDocument in document.LogicalDocuments)
+            {
+                var syntaxTree = await logicalDocument.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                if (syntaxTree == null)
+                    continue;
 
-            cancellationToken.ThrowIfCancellationRequested();
+                foreach (var diagnostic in syntaxTree.GetDiagnostics())
+                    result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SyntaxParsing));
 
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            if (semanticModel != null)
-                foreach (var diagnostic in semanticModel.GetDiagnostics())
-                    result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SemanticAnalysis));
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var semanticModel = await logicalDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                if (semanticModel != null)
+                    foreach (var diagnostic in semanticModel.GetDiagnostics())
+                        result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SemanticAnalysis));
+            }
 
             return result.ToImmutable();
         }

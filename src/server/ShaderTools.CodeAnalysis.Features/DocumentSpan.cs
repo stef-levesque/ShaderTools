@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using ShaderTools.CodeAnalysis.Navigation;
 using ShaderTools.CodeAnalysis.Text;
 using ShaderTools.Utilities;
 
@@ -14,10 +11,10 @@ namespace ShaderTools.CodeAnalysis
     /// </summary>
     internal struct DocumentSpan : IEquatable<DocumentSpan>
     {
-        public Document Document { get; }
+        public LogicalDocument Document { get; }
         public SourceFileSpan SourceSpan { get; }
 
-        public DocumentSpan(Document document, SourceFileSpan sourceSpan)
+        public DocumentSpan(LogicalDocument document, SourceFileSpan sourceSpan)
         {
             Document = document;
             SourceSpan = sourceSpan;
@@ -39,23 +36,5 @@ namespace ShaderTools.CodeAnalysis
             => Hash.Combine(
                 this.Document,
                 this.SourceSpan.GetHashCode());
-    }
-
-    internal static class DocumentSpanExtensions
-    {
-        public static bool CanNavigateTo(this DocumentSpan documentSpan)
-        {
-            var workspace = documentSpan.Document.Workspace;
-            var service = workspace.Services.GetService<IDocumentNavigationService>();
-            return service.CanNavigateToSpan(workspace, documentSpan.Document.Id, documentSpan.SourceSpan);
-        }
-
-        public static bool TryNavigateTo(this DocumentSpan documentSpan)
-        {
-            var workspace = documentSpan.Document.Workspace;
-            var service = workspace.Services.GetService<IDocumentNavigationService>();
-            return service.TryNavigateToSpan(workspace, documentSpan.Document.Id, documentSpan.SourceSpan,
-                options: workspace.Options.WithChangedOption(NavigationOptions.PreferProvisionalTab, true));
-        }
     }
 }

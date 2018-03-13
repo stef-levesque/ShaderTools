@@ -67,7 +67,7 @@ namespace ShaderTools.CodeAnalysis
         protected Document CreateDocument(DocumentId documentId, string languageName, SourceText sourceText, string filePath)
         {
             var languageServices = _services.GetLanguageServices(languageName);
-            return new Document(languageServices, documentId, sourceText, filePath);
+            return new Document(languageServices, documentId, sourceText, filePath, null, null, null);
         }
 
         /// <summary>

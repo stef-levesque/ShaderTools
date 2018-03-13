@@ -11,7 +11,7 @@ namespace ShaderTools.CodeAnalysis.Navigation
         {
             private readonly ISymbol _declaredSymbol;
 
-            public Document Document { get; }
+            public LogicalDocument Document { get; }
 
             public ImmutableArray<TaggedText> DisplayTaggedParts => _declaredSymbol.ToMarkup(SymbolDisplayFormat.NavigateTo).Tokens.ToTaggedText();
 
@@ -28,7 +28,7 @@ namespace ShaderTools.CodeAnalysis.Navigation
             /// </summary>
             public bool IsImplicitlyDeclared => false;
 
-            public DeclaredSymbolNavigableItem(Document document, ISymbol symbol, SourceFileSpan sourceSpan)
+            public DeclaredSymbolNavigableItem(LogicalDocument document, ISymbol symbol, SourceFileSpan sourceSpan)
             {
                 Document = document;
                 _declaredSymbol = symbol;

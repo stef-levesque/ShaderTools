@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ShaderTools.CodeAnalysis.Shared.Extensions;
 using ShaderTools.CodeAnalysis.Symbols;
 using ShaderTools.CodeAnalysis.Symbols.Markup;
-using ShaderTools.CodeAnalysis.Syntax;
 using ShaderTools.CodeAnalysis.Text;
 using ShaderTools.Utilities.Collections;
 
@@ -23,7 +21,7 @@ namespace ShaderTools.CodeAnalysis.SignatureHelp
         public abstract bool IsTriggerCharacter(char ch);
         public abstract bool IsRetriggerCharacter(char ch);
 
-        protected abstract Task<SignatureHelpItems> GetItemsWorkerAsync(Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken);
+        protected abstract Task<SignatureHelpItems> GetItemsWorkerAsync(LogicalDocument document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken);
 
         protected static SignatureHelpItems CreateSignatureHelpItems(
             IList<SignatureHelpItem> items, SourceFileSpan applicableSpan, SignatureHelpState state)
@@ -92,7 +90,7 @@ namespace ShaderTools.CodeAnalysis.SignatureHelp
         }
 
         public async Task<SignatureHelpItems> GetItemsAsync(
-            Document document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken)
+            LogicalDocument document, int position, SignatureHelpTriggerInfo triggerInfo, CancellationToken cancellationToken)
         {
             var itemsForCurrentDocument = await GetItemsWorkerAsync(document, position, triggerInfo, cancellationToken).ConfigureAwait(false);
             return itemsForCurrentDocument;

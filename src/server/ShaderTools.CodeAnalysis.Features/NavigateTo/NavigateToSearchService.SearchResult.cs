@@ -1,15 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.IO;
-using ShaderTools.CodeAnalysis.FindSymbols;
 using ShaderTools.CodeAnalysis.Navigation;
 using ShaderTools.CodeAnalysis.Shared.Extensions;
 using ShaderTools.CodeAnalysis.Symbols;
-using ShaderTools.CodeAnalysis.Text;
-using ShaderTools.Utilities.PooledObjects;
 
 namespace ShaderTools.CodeAnalysis.NavigateTo
 {
@@ -58,11 +51,11 @@ namespace ShaderTools.CodeAnalysis.NavigateTo
             public string SecondarySort { get; }
             public bool IsCaseSensitive { get; }
 
-            private readonly Document _document;
+            private readonly LogicalDocument _document;
             private readonly ISymbol _declaredSymbol;
 
             public SearchResult(
-                Document document, ISymbol declaredSymbol, string kind,
+                LogicalDocument document, ISymbol declaredSymbol, string kind,
                 NavigateToMatchKind matchKind, bool isCaseSensitive, INavigableItem navigableItem)
             {
                 _document = document;

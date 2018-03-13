@@ -11,6 +11,6 @@ namespace ShaderTools.CodeAnalysis.GoToDefinition
         /// <summary>
         /// Finds the definitions for the symbol at the specific position in the document.
         /// </summary>
-        Task<ImmutableArray<DefinitionItem>> FindDefinitionsAsync(Document document, int position, CancellationToken cancellationToken);
+        Task<ImmutableArray<DefinitionItem>> FindDefinitionsAsync(LogicalDocument document, int position, CancellationToken cancellationToken);
     }
 }

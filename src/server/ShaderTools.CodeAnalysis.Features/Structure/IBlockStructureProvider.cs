@@ -7,6 +7,6 @@ namespace ShaderTools.CodeAnalysis.Structure
 {
     internal interface IBlockStructureProvider : ILanguageService
     {
-        Task<ImmutableArray<BlockSpan>> ProvideBlockStructureAsync(Document document, CancellationToken cancellationToken);
+        Task<ImmutableArray<BlockSpan>> ProvideBlockStructureAsync(LogicalDocument document, CancellationToken cancellationToken);
     }
 }

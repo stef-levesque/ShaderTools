@@ -223,14 +223,13 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             TextDocumentPositionParams textDocumentPositionParams,
             RequestContext<DocumentHighlight[]> requestContext)
         {
-            var document = GetDocument(textDocumentPositionParams.TextDocument);
-            var position = ConvertPosition(document, textDocumentPositionParams.Position);
+            var (document, position) = GetDocumentAndPosition(textDocumentPositionParams);
 
             var documentHighlightsService = document.Workspace.Services.GetService<IDocumentHighlightsService>();
             
             var documentHighlightsList = await documentHighlightsService.GetDocumentHighlightsAsync(
                 document, position,
-                ImmutableHashSet<Document>.Empty,
+                ImmutableHashSet<LogicalDocument>.Empty,
                 CancellationToken.None);
 
             var result = new List<DocumentHighlight>();
@@ -249,7 +248,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                         Kind = highlightSpan.Kind == HighlightSpanKind.Definition
                             ? DocumentHighlightKind.Write
                             : DocumentHighlightKind.Read,
-                        Range = ConvertTextSpanToRange(document.SourceText, highlightSpan.TextSpan)
+                        Range = ConvertTextSpanToRange(document, highlightSpan.TextSpan)
                     });
                 }
             }
@@ -261,8 +260,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             TextDocumentPositionParams textDocumentPositionParams,
             RequestContext<SignatureHelp> requestContext)
         {
-            var document = GetDocument(textDocumentPositionParams.TextDocument);
-            var position = ConvertPosition(document, textDocumentPositionParams.Position);
+            var (document, position) = GetDocumentAndPosition(textDocumentPositionParams);
 
             var signatureHelpHandler = document.Workspace.Services.GetService<SignatureHelpHandler>();
 
@@ -275,8 +273,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             TextDocumentPositionParams textDocumentPositionParams,
             RequestContext<Location[]> requestContext)
         {
-            var document = GetDocument(textDocumentPositionParams.TextDocument);
-            var position = ConvertPosition(document, textDocumentPositionParams.Position);
+            var (document, position) = GetDocumentAndPosition(textDocumentPositionParams);
 
             var goToDefinitionService = document.GetLanguageService<IGoToDefinitionService>();
             var definitions = await goToDefinitionService.FindDefinitionsAsync(document, position, CancellationToken.None);
@@ -286,11 +283,12 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             var locations = definitions
                 .Select(x =>
                 {
-                    var sourceSpan = x.SourceSpans[0].SourceSpan;
+                    var documentSpan = x.SourceSpans[0];
+                    var sourceSpan = documentSpan.SourceSpan;
                     return new Location
                     {
                         Uri = GetFileUri(sourceSpan.File.FilePath),
-                        Range = ConvertTextSpanToRange(sourceSpan.File.Text, sourceSpan.Span)
+                        Range = ConvertTextSpanToRange(documentSpan.Document, sourceSpan.Span)
                     };
                 })
                 .ToArray();
@@ -302,8 +300,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             TextDocumentPositionParams textDocumentPositionParams,
             RequestContext<Hover> requestContext)
         {
-            var document = GetDocument(textDocumentPositionParams.TextDocument);
-            var position = ConvertPosition(document, textDocumentPositionParams.Position);
+            var (document, position) = GetDocumentAndPosition(textDocumentPositionParams);
 
             var providerCoordinatorFactory = GetGlobalService<IQuickInfoProviderCoordinatorFactory>();
             var providerCoordinator = providerCoordinatorFactory.CreateCoordinator(document);
@@ -328,6 +325,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                         {
                             symbolInfo.Add(new MarkedString
                             {
+                                Language = "markdown",
                                 Value = c.Documentation.GetFullText()
                             });
                         }
@@ -338,7 +336,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                         throw new ArgumentOutOfRangeException();
                 }
 
-                symbolRange = ConvertTextSpanToRange(document.SourceText, item.TextSpan);
+                symbolRange = ConvertTextSpanToRange(document, item.TextSpan);
             }
 
             await requestContext.SendResult(
@@ -359,7 +357,10 @@ namespace ShaderTools.LanguageServer.Protocol.Server
 
             var symbols = ImmutableArray.CreateBuilder<SymbolInformation>();
 
-            await FindSymbolsInDocument(searchService, document, string.Empty, symbols);
+            foreach (var logicalDocument in document.LogicalDocuments)
+            {
+                await FindSymbolsInDocument(searchService, logicalDocument, string.Empty, symbols);
+            }
 
             await requestContext.SendResult(symbols.ToArray());
         }
@@ -374,7 +375,10 @@ namespace ShaderTools.LanguageServer.Protocol.Server
 
             foreach (var document in _workspace.CurrentDocuments.Documents)
             {
-                await FindSymbolsInDocument(searchService, document, workspaceSymbolParams.Query, symbols);
+                foreach (var logicalDocument in document.LogicalDocuments)
+                {
+                    await FindSymbolsInDocument(searchService, logicalDocument, workspaceSymbolParams.Query, symbols);
+                }
             }
 
             await requestContext.SendResult(symbols.ToArray());
@@ -384,8 +388,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             TextDocumentPositionParams completionParams,
             RequestContext<CompletionItem[]> requestContext)
         {
-            var document = GetDocument(completionParams.TextDocument);
-            var position = ConvertPosition(document, completionParams.Position);
+            var (document, position) = GetDocumentAndPosition(completionParams);
 
             var completionService = document.GetLanguageService<CompletionService>();
 
@@ -398,7 +401,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
             await requestContext.SendResult(completionItems);
         }
 
-        private static CompletionItem ConvertCompletionItem(Document document, CompletionRules completionRules, CodeAnalysis.Completion.CompletionItem item)
+        private static CompletionItem ConvertCompletionItem(LogicalDocument document, CompletionRules completionRules, CodeAnalysis.Completion.CompletionItem item)
         {
             var documentation = CommonCompletionItem.HasDescription(item)
                 ? CommonCompletionItem.GetDescription(item).Text
@@ -413,7 +416,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                 TextEdit = new TextEdit
                 {
                     NewText = item.DisplayText,
-                    Range = ConvertTextSpanToRange(document.SourceText, item.Span)
+                    Range = ConvertTextSpanToRange(document, item.Span)
                 },
                 Documentation = documentation,
                 CommitCharacters = completionRules.DefaultCommitCharacters.Select(x => x.ToString()).ToArray()
@@ -421,7 +424,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
         }
 
         private async Task FindSymbolsInDocument(
-            INavigateToSearchService searchService, Document document,
+            INavigateToSearchService searchService, LogicalDocument document,
             string searchPattern,
             ImmutableArray<SymbolInformation>.Builder resultsBuilder)
         {
@@ -435,7 +438,7 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                     Location = new Location
                     {
                         Uri = GetFileUri(r.NavigableItem.SourceSpan.File.FilePath),
-                        Range = ConvertTextSpanToRange(r.NavigableItem.SourceSpan.File.Text, r.NavigableItem.SourceSpan.Span)
+                        Range = ConvertTextSpanToRange(r.NavigableItem.Document, r.NavigableItem.SourceSpan.Span)
                     },
                     Name = r.Name
                 }));
@@ -475,6 +478,29 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                     : filePath;
         }
 
+        private static Range ConvertTextSpanToRange(LogicalDocument document, TextSpan textSpan)
+        {
+            // Map textSpan to parent document.
+            textSpan = new TextSpan(textSpan.Start + document.SpanInParentRootFile.Start, textSpan.Length);
+            var sourceText = document.Parent.SourceText;
+
+            var linePositionSpan = sourceText.Lines.GetLinePositionSpan(textSpan);
+
+            return new Range
+            {
+                Start = new Position
+                {
+                    Line = linePositionSpan.Start.Line,
+                    Character = linePositionSpan.Start.Character
+                },
+                End = new Position
+                {
+                    Line = linePositionSpan.End.Line,
+                    Character = linePositionSpan.End.Character
+                }
+            };
+        }
+
         private static Range ConvertTextSpanToRange(SourceText sourceText, TextSpan textSpan)
         {
             var linePositionSpan = sourceText.Lines.GetLinePositionSpan(textSpan);
@@ -509,9 +535,18 @@ namespace ShaderTools.LanguageServer.Protocol.Server
                 .FirstOrDefault();
         }
 
-        private int ConvertPosition(Document document, Position position)
+        private (LogicalDocument embeddedDocument, int embeddedPosition) GetDocumentAndPosition(
+            TextDocumentPositionParams textDocumentPositionParams)
         {
-            return document.SourceText.Lines.GetPosition(new LinePosition(position.Line, position.Character));
+            var document = GetDocument(textDocumentPositionParams.TextDocument);
+
+            var documentPosition = document.SourceText.Lines.GetPosition(new LinePosition(
+                textDocumentPositionParams.Position.Line,
+                textDocumentPositionParams.Position.Character));
+
+            var logicalDocument = document.GetLogicalDocument(new TextSpan(documentPosition, 0));
+
+            return (logicalDocument, documentPosition - logicalDocument.SpanInParentRootFile.Start);
         }
 
         private static TextChange GetFileChangeDetails(Document document, Range changeRange, string insertString)

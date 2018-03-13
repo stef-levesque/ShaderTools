@@ -159,12 +159,12 @@ export class SessionManager {
 
             var editorServicesLogPath = this.log.getLogFilePath("EditorServices");
 
-            var editorServicesHostExePath = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp1.1/ShaderTools.LanguageServer.dll');
+            var editorServicesHostExePath = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp2.0/ShaderTools.LanguageServer.dll');
 
             startArgs.unshift(editorServicesHostExePath);
             startArgs.push("--logfilepath", editorServicesLogPath);
 
-            startArgs.push("--waitfordebugger", 'true');
+            startArgs.push("--waitfordebugger");
 
             this.log.write(`${utils.getTimestampString()} Language server starting...`);
 

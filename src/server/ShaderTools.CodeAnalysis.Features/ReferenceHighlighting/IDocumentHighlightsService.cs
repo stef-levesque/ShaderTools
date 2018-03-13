@@ -8,6 +8,6 @@ namespace ShaderTools.CodeAnalysis.ReferenceHighlighting
     internal interface IDocumentHighlightsService : IWorkspaceService
     {
         Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(
-            Document document, int position, IImmutableSet<Document> documentsToSearch, CancellationToken cancellationToken);
+            LogicalDocument document, int position, IImmutableSet<LogicalDocument> documentsToSearch, CancellationToken cancellationToken);
     }
 }

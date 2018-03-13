@@ -31,7 +31,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
         public sealed override async Task<CompletionDescription> GetDescriptionAsync(
-            Document document, CompletionItem item, CancellationToken cancellationToken)
+            LogicalDocument document, CompletionItem item, CancellationToken cancellationToken)
         {
             // Get the actual description provided by whatever subclass we are.
             // Then, if we would commit text that could be expanded as a snippet, 
@@ -43,7 +43,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
         protected virtual Task<CompletionDescription> GetDescriptionWorkerAsync(
-            Document document, CompletionItem item, CancellationToken cancellationToken)
+            LogicalDocument document, CompletionItem item, CancellationToken cancellationToken)
         {
             return CommonCompletionItem.HasDescription(item)
                 ? Task.FromResult(CommonCompletionItem.GetDescription(item))
@@ -51,14 +51,14 @@ namespace ShaderTools.CodeAnalysis.Completion
         }
 
 
-        public override async Task<CompletionChange> GetChangeAsync(Document document, CompletionItem item, char? commitKey = null, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<CompletionChange> GetChangeAsync(LogicalDocument document, CompletionItem item, char? commitKey = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var change = (await GetTextChangeAsync(document, item, commitKey, cancellationToken).ConfigureAwait(false))
                          ?? new TextChange(item.Span, item.DisplayText);
             return CompletionChange.Create(change);
         }
 
-        public virtual Task<TextChange?> GetTextChangeAsync(Document document, CompletionItem selectedItem, char? ch, CancellationToken cancellationToken)
+        public virtual Task<TextChange?> GetTextChangeAsync(LogicalDocument document, CompletionItem selectedItem, char? ch, CancellationToken cancellationToken)
         {
             return GetTextChangeAsync(selectedItem, ch, cancellationToken);
         }

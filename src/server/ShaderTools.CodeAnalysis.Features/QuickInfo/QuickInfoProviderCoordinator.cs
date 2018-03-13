@@ -13,7 +13,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
             _providers = providers;
         }
 
-        public async Task<(QuickInfoItem, IQuickInfoProvider)> GetItemAsync(Document document, int position, CancellationToken cancellationToken)
+        public async Task<(QuickInfoItem, IQuickInfoProvider)> GetItemAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             foreach (var provider in _providers)
             {

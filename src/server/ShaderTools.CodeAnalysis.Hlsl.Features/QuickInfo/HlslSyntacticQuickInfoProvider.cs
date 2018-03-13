@@ -12,7 +12,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.QuickInfo
     [ExportQuickInfoProvider(PredefinedQuickInfoProviderNames.Syntactic, LanguageNames.Hlsl)]
     internal class HlslSyntacticQuickInfoProvider : AbstractQuickInfoProvider
     {
-        protected override async Task<QuickInfoContent> BuildContentAsync(Document document, ISyntaxToken token, CancellationToken cancellationToken)
+        protected override async Task<QuickInfoContent> BuildContentAsync(LogicalDocument document, ISyntaxToken token, CancellationToken cancellationToken)
         {
             var macroDefinitionNode = token.Parent as DefineDirectiveTriviaSyntax;
             if (macroDefinitionNode != null && macroDefinitionNode.MacroName == token)

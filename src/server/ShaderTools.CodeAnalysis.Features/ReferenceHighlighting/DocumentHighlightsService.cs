@@ -12,7 +12,7 @@ namespace ShaderTools.CodeAnalysis.ReferenceHighlighting
     [ExportWorkspaceService(typeof(IDocumentHighlightsService))]
     internal sealed class DocumentHighlightsService : IDocumentHighlightsService
     {
-        public async Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(Document document, int position, IImmutableSet<Document> documentsToSearch, CancellationToken cancellationToken)
+        public async Task<ImmutableArray<DocumentHighlights>> GetDocumentHighlightsAsync(LogicalDocument document, int position, IImmutableSet<LogicalDocument> documentsToSearch, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             if (semanticModel == null)

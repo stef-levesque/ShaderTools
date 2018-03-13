@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using ShaderTools.CodeAnalysis.Compilation;
 using ShaderTools.CodeAnalysis.Host;
 using ShaderTools.CodeAnalysis.Options;
 using ShaderTools.CodeAnalysis.Properties;
-using ShaderTools.CodeAnalysis.Syntax;
 using ShaderTools.CodeAnalysis.Text;
 using ShaderTools.Utilities.Collections;
-using ShaderTools.Utilities.Diagnostics;
 using ShaderTools.Utilities.ErrorReporting;
 using ShaderTools.Utilities.Threading;
 
@@ -24,9 +21,7 @@ namespace ShaderTools.CodeAnalysis
     public sealed class Document
     {
         private readonly HostLanguageServices _languageServices;
-        private readonly AsyncLazy<SyntaxTreeBase> _lazySyntaxTree;
-        private readonly AsyncLazy<SemanticModelBase> _lazySemanticModel;
-
+        
         /// <summary>
         /// Gets a unique string that identifies this file.  At this time,
         /// this property returns a normalized version of the value stored
@@ -49,7 +44,12 @@ namespace ShaderTools.CodeAnalysis
 
         public Workspace Workspace => _languageServices.WorkspaceServices.Workspace;
 
-        internal Document(HostLanguageServices languageServices, DocumentId documentId, SourceText sourceText, string filePath)
+        public ImmutableArray<LogicalDocument> LogicalDocuments { get; }
+
+        internal Document(
+            HostLanguageServices languageServices, 
+            DocumentId documentId, SourceText sourceText, string filePath,
+            Document parent, SourceRange? rangeInParent, TextSpan? textSpanInParent)
         {
             _languageServices = languageServices;
 
@@ -57,83 +57,13 @@ namespace ShaderTools.CodeAnalysis
             SourceText = sourceText;
             FilePath = filePath;
 
-            _lazySyntaxTree = new AsyncLazy<SyntaxTreeBase>(ct => Task.Run(() =>
-            {
-                var syntaxTreeFactory = languageServices.GetRequiredService<ISyntaxTreeFactoryService>();
-
-                var syntaxTree = syntaxTreeFactory.ParseSyntaxTree(sourceText, ct);
-
-                // make sure there is an association between this tree and this doc id before handing it out
-                BindSyntaxTreeToId(syntaxTree, this.Id);
-
-                return syntaxTree;
-            }, ct), true);
-
-            _lazySemanticModel = new AsyncLazy<SemanticModelBase>(ct => Task.Run(async () =>
-            {
-                var syntaxTree = await GetSyntaxTreeAsync(ct).ConfigureAwait(false);
-
-                var compilationFactory = languageServices.GetRequiredService<ICompilationFactoryService>();
-
-                return compilationFactory.CreateCompilation(syntaxTree).GetSemanticModelBase(ct);
-            }, ct), true);
-        }
-
-        public bool SupportsSemanticModel => LanguageServices.GetService<ICompilationFactoryService>() != null;
-
-        public Task<SyntaxTreeBase> GetSyntaxTreeAsync(CancellationToken cancellationToken)
-        {
-            return _lazySyntaxTree.GetValueAsync(cancellationToken);
-        }
-
-        internal async Task<SyntaxNodeBase> GetSyntaxRootAsync(CancellationToken cancellationToken)
-        {
-            var syntaxTree = await GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            return syntaxTree.Root;
-        }
-
-        /// <summary>
-        /// Only for features that absolutely must run synchronously (probably because they're
-        /// on the UI thread).  Right now, the only feature this is for is Outlining as VS will
-        /// block on that feature from the UI thread when a document is opened.
-        /// </summary>
-        internal SyntaxNodeBase GetSyntaxRootSynchronously(CancellationToken cancellationToken)
-        {
-            var tree = this.GetSyntaxTreeSynchronously(cancellationToken);
-            return tree.Root;
-        }
-
-        internal SyntaxTreeBase GetSyntaxTreeSynchronously(CancellationToken cancellationToken)
-        {
-            return _lazySyntaxTree.GetValue(cancellationToken);
-        }
-
-        /// <summary>
-        /// Get the current syntax tree for the document if the text is already loaded and the tree is already parsed.
-        /// In almost all cases, you should call <see cref="GetSyntaxTreeAsync"/> to fetch the tree, which will parse the tree
-        /// if it's not already parsed.
-        /// </summary>
-        public bool TryGetSyntaxTree(out SyntaxTreeBase syntaxTree)
-        {
-            return _lazySyntaxTree.TryGetValue(out syntaxTree);
-        }
-
-        public async Task<SemanticModelBase> GetSemanticModelAsync(CancellationToken cancellationToken)
-        {
-            if (!SupportsSemanticModel)
-                return null;
-
-            var options = await GetOptionsAsync(cancellationToken).ConfigureAwait(false);
-
-            if (!options.GetOption(FeatureOnOffOptions.IntelliSense))
-                return null;
-
-            return await _lazySemanticModel.GetValueAsync(cancellationToken);
+            var logicalDocumentFactory = languageServices.GetRequiredService<ILogicalDocumentFactory>();
+            LogicalDocuments = logicalDocumentFactory.GetLogicalDocuments(this).ToImmutableArray();
         }
 
         public Document WithId(DocumentId documentId)
         {
-            return new Document(_languageServices, documentId, SourceText, FilePath);
+            return new Document(_languageServices, documentId, SourceText, FilePath, null, null, null);
         }
 
         /// <summary>
@@ -141,12 +71,12 @@ namespace ShaderTools.CodeAnalysis
         /// </summary>
         public Document WithText(SourceText newText)
         {
-            return new Document(_languageServices, Id, newText, FilePath);
+            return new Document(_languageServices, Id, newText, FilePath, null, null, null);
         }
 
         public Document WithFilePath(string filePath)
         {
-            return new Document(_languageServices, Id, SourceText, filePath);
+            return new Document(_languageServices, Id, SourceText, filePath, null, null, null);
         }
 
         /// <summary>
@@ -227,32 +157,17 @@ namespace ShaderTools.CodeAnalysis
             return _cachedOptions.GetValueAsync(cancellationToken);
         }
 
-        private static readonly ReaderWriterLockSlim s_syntaxTreeToIdMapLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-        private static readonly ConditionalWeakTable<SyntaxTreeBase, DocumentId> s_syntaxTreeToIdMap =
-            new ConditionalWeakTable<SyntaxTreeBase, DocumentId>();
-
-        private static void BindSyntaxTreeToId(SyntaxTreeBase tree, DocumentId id)
+        public LogicalDocument GetLogicalDocument(TextSpan textSpan)
         {
-            using (s_syntaxTreeToIdMapLock.DisposableWrite())
+            foreach (var logicalDocument in LogicalDocuments.Reverse())
             {
-                if (s_syntaxTreeToIdMap.TryGetValue(tree, out var existingId))
+                if (logicalDocument.SpanInParentRootFile.Contains(textSpan))
                 {
-                    Contract.ThrowIfFalse(existingId == id);
-                }
-                else
-                {
-                    s_syntaxTreeToIdMap.Add(tree, id);
+                    return logicalDocument;
                 }
             }
-        }
 
-        internal static DocumentId GetDocumentIdForTree(SyntaxTreeBase tree)
-        {
-            using (s_syntaxTreeToIdMapLock.DisposableRead())
-            {
-                s_syntaxTreeToIdMap.TryGetValue(tree, out var id);
-                return id;
-            }
+            throw new InvalidOperationException();
         }
     }
 }

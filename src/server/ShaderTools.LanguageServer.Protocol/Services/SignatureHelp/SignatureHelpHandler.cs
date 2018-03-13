@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -28,7 +27,7 @@ namespace ShaderTools.LanguageServer.Protocol.Services.SignatureHelp
         }
 
         // TODO: Some of this is duplicated from Controller.Session_ComputeModel.cs
-        private async Task<SignatureHelpItems> GetItemsAsync(Document document, int position, CancellationToken cancellationToken)
+        private async Task<SignatureHelpItems> GetItemsAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             var triggerInfo = new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.InvokeSignatureHelpCommand);
 
@@ -79,7 +78,7 @@ namespace ShaderTools.LanguageServer.Protocol.Services.SignatureHelp
             return currentTextSpan.Value.Start > bestItems.ApplicableSpan.Start;
         }
 
-        public async Task<LanguageServer.SignatureHelp> GetResultAsync(Document document, int position, CancellationToken cancellationToken)
+        public async Task<LanguageServer.SignatureHelp> GetResultAsync(LogicalDocument document, int position, CancellationToken cancellationToken)
         {
             var signatureHelpItems = await GetItemsAsync(document, position, cancellationToken);
 

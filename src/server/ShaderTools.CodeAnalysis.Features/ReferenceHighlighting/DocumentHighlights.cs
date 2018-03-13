@@ -4,10 +4,10 @@ namespace ShaderTools.CodeAnalysis.ReferenceHighlighting
 {
     internal struct DocumentHighlights
     {
-        public Document Document { get; }
+        public LogicalDocument Document { get; }
         public ImmutableArray<HighlightSpan> HighlightSpans { get; }
 
-        public DocumentHighlights(Document document, ImmutableArray<HighlightSpan> highlightSpans)
+        public DocumentHighlights(LogicalDocument document, ImmutableArray<HighlightSpan> highlightSpans)
         {
             Document = document;
             HighlightSpans = highlightSpans;

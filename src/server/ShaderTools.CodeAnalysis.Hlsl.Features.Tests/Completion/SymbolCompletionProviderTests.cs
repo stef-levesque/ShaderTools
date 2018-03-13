@@ -112,7 +112,7 @@ float Dummy(float input)
 
             var completionContext = new CompletionContext(
                 completionProvider, 
-                document, 
+                document.LogicalDocuments[0], 
                 index, 
                 new TextSpan(), 
                 new CompletionTrigger(CompletionTriggerKind.Invoke),

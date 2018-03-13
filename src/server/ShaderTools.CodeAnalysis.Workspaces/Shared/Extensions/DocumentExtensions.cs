@@ -6,5 +6,8 @@ namespace ShaderTools.CodeAnalysis.Shared.Extensions
     {
         public static TLanguageService GetLanguageService<TLanguageService>(this Document document) where TLanguageService : class, ILanguageService
             => document?.LanguageServices?.GetService<TLanguageService>();
+
+        public static TLanguageService GetLanguageService<TLanguageService>(this LogicalDocument document) where TLanguageService : class, ILanguageService
+            => document?.LanguageServices?.GetService<TLanguageService>();
     }
 }

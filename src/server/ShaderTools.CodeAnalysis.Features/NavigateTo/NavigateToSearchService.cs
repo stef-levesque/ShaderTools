@@ -15,7 +15,7 @@ namespace ShaderTools.CodeAnalysis.NavigateTo
     [ExportWorkspaceService(typeof(INavigateToSearchService))]
     internal sealed partial class NavigateToSearchService : INavigateToSearchService
     {
-        public async Task<ImmutableArray<INavigateToSearchResult>> SearchDocumentAsync(Document document, string searchPattern, CancellationToken cancellationToken)
+        public async Task<ImmutableArray<INavigateToSearchResult>> SearchDocumentAsync(LogicalDocument document, string searchPattern, CancellationToken cancellationToken)
         {
             var result = ArrayBuilder<INavigateToSearchResult>.GetInstance();
 
@@ -59,7 +59,7 @@ namespace ShaderTools.CodeAnalysis.NavigateTo
         }
 
         private static IEnumerable<INavigateToSearchResult> ConvertResult(
-            ISymbol declaredSymbol, Document document, SyntaxTreeBase syntaxTree,
+            ISymbol declaredSymbol, LogicalDocument document, SyntaxTreeBase syntaxTree,
             NavigateToMatchKind matchKind)
         {
             var isCaseSensitive = false;

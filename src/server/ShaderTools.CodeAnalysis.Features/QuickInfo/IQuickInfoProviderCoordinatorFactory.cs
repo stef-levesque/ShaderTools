@@ -2,6 +2,6 @@
 {
     internal interface IQuickInfoProviderCoordinatorFactory
     {
-        IQuickInfoProviderCoordinator CreateCoordinator(Document document);
+        IQuickInfoProviderCoordinator CreateCoordinator(LogicalDocument document);
     }
 }

@@ -41,7 +41,7 @@ namespace ShaderTools.CodeAnalysis.Completion
             return isCaseSensitive ? CaseSensitiveInstance : CaseInsensitiveInstance;
         }
 
-        public static CompletionHelper GetHelper(Document document)
+        public static CompletionHelper GetHelper(LogicalDocument document)
         {
             return GetHelper(document.Workspace, document.Language);
         }

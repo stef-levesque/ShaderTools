@@ -39,7 +39,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// <summary>
         /// Gets the description of the specified item.
         /// </summary>
-        public virtual Task<CompletionDescription> GetDescriptionAsync(Document document, CompletionItem item, CancellationToken cancellationToken)
+        public virtual Task<CompletionDescription> GetDescriptionAsync(LogicalDocument document, CompletionItem item, CancellationToken cancellationToken)
         {
             return Task.FromResult(CompletionDescription.Empty);
         }
@@ -52,7 +52,7 @@ namespace ShaderTools.CodeAnalysis.Completion
         /// <param name="commitKey">The optional key character that caused the commit.</param>
         /// <param name="cancellationToken"></param>
         public virtual Task<CompletionChange> GetChangeAsync(
-            Document document, CompletionItem item, char? commitKey, CancellationToken cancellationToken)
+            LogicalDocument document, CompletionItem item, char? commitKey, CancellationToken cancellationToken)
         {
             return Task.FromResult(CompletionChange.Create(new TextChange(item.Span, item.DisplayText)));
         }

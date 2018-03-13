@@ -27,7 +27,7 @@ namespace ShaderTools.CodeAnalysis.Navigation
         /// </summary>
         bool IsImplicitlyDeclared { get; }
 
-        Document Document { get; }
+        LogicalDocument Document { get; }
         SourceFileSpan SourceSpan { get; }
 
         ImmutableArray<INavigableItem> ChildItems { get; }

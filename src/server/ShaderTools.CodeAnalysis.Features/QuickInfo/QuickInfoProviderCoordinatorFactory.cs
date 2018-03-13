@@ -19,7 +19,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
             _providers = ExtensionOrderer.Order(providers);
         }
 
-        public IQuickInfoProviderCoordinator CreateCoordinator(Document document)
+        public IQuickInfoProviderCoordinator CreateCoordinator(LogicalDocument document)
         {
             return new QuickInfoProviderCoordinator(_providers
                 .Where(x => x.Metadata.Language == document.Language)

@@ -26,9 +26,6 @@ namespace ShaderTools.CodeAnalysis.FindUsages
                       sourceSpans, displayIfNoReferences)
             {
             }
-
-            public override bool CanNavigateTo() => SourceSpans[0].CanNavigateTo();
-            public override bool TryNavigateTo() => SourceSpans[0].TryNavigateTo();
         }
     }
 }

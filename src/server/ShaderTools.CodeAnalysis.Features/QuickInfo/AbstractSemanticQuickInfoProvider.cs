@@ -18,7 +18,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
     internal abstract class AbstractSemanticQuickInfoProvider : AbstractQuickInfoProvider
     {
         protected override async Task<QuickInfoContent> BuildContentAsync(
-            Document document,
+            LogicalDocument document,
             ISyntaxToken token,
             CancellationToken cancellationToken)
         {
@@ -83,7 +83,7 @@ namespace ShaderTools.CodeAnalysis.QuickInfo
         }
 
         private async Task<ValueTuple<SemanticModelBase, ImmutableArray<ISymbol>>> BindTokenAsync(
-            Document document,
+            LogicalDocument document,
             ISyntaxToken token,
             CancellationToken cancellationToken)
         {
