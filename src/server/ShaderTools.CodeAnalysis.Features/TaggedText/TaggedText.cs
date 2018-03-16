@@ -58,7 +58,6 @@ namespace ShaderTools.CodeAnalysis
 
         public static string JoinText(this ImmutableArray<TaggedText> values)
         {
-
             return values.IsDefault
                 ? null
                 : Join(values);
@@ -94,32 +93,6 @@ namespace ShaderTools.CodeAnalysis
                 yield return new ClassifiedSpan(new TextSpan(index, text.Length), classificationTypeName);
                 index += text.Length;
             }
-        }
-
-        private const string LeftToRightMarkerPrefix = "\u200e";
-
-        public static string ToVisibleDisplayString(this TaggedText part, bool includeLeftToRightMarker)
-        {
-            var text = part.ToString();
-
-            if (includeLeftToRightMarker)
-            {
-                var tag = part.Tag;
-                if (tag == TextTags.Punctuation ||
-                    tag == TextTags.Space ||
-                    tag == TextTags.LineBreak)
-                {
-                    text = LeftToRightMarkerPrefix + text;
-                }
-            }
-
-            return text;
-        }
-
-        public static string ToVisibleDisplayString(this IEnumerable<TaggedText> parts, bool includeLeftToRightMarker)
-        {
-            return string.Join(string.Empty, parts.Select(
-                p => p.ToVisibleDisplayString(includeLeftToRightMarker)));
         }
 
         public static string GetFullText(this IEnumerable<TaggedText> parts)

@@ -5,14 +5,11 @@
   "publisher": "TimGJones",
   "description": "Rich HLSL language support for Visual Studio Code",
   "engines": {
-    "vscode": "^1.20.0"
+    "vscode": "^1.21.0"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "homepage": "https://github.com/tgjones/HlslTools/blob/master/src/ShaderTools.VSCode/README.md",
-  "categories": [
-    "Languages",
-    "Linters"
-  ],
+  "homepage": "https://github.com/ShaderTools/ShaderTools/tree/master/src/clients/vscode/README.md",
+  "categories": [ "Languages" ],
   "icon": "../../art/logo.png",
   "galleryBanner": {
     "color": "#5C2D91",
@@ -20,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tgjones/HlslTools.git"
+    "url": "https://github.com/ShaderTools/ShaderTools.git"
   },
   "main": "./out/main",
   "activationEvents": [
@@ -32,9 +29,9 @@
   },
   "devDependencies": {
     "@types/node": "^6.0.40",
-    "typescript": "^2.0.3",
+    "typescript": "^2.7.2",
     "vsce": "^1.18.0",
-    "vscode": "^1.1.11"
+    "vscode": "^1.1.13"
   },
   "extensionDependencies": [
     "vscode.hlsl",
@@ -45,5 +42,6 @@
     "compile-watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
+  "enableProposedApi": true,
   "private": true
 }

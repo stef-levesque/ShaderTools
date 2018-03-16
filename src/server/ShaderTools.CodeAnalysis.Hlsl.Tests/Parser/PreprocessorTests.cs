@@ -745,6 +745,26 @@ int a;
         }
 
         [Fact]
+        public void TestIfWithDefinedOnDefinedInParentheses()
+        {
+            const string text = @"
+#define BAR
+#define FOO (defined(BAR) && !defined(BAZ))
+#if FOO
+int a;
+#endif";
+            var node = Parse(text);
+
+            TestRoundTripping(node, text);
+            VerifyDirectivesSpecial(node,
+                new DirectiveInfo { Kind = SyntaxKind.ObjectLikeDefineDirectiveTrivia, Status = NodeStatus.IsActive, Text = "BAR" },
+                new DirectiveInfo { Kind = SyntaxKind.ObjectLikeDefineDirectiveTrivia, Status = NodeStatus.IsActive, Text = "FOO" },
+                new DirectiveInfo { Kind = SyntaxKind.IfDirectiveTrivia, Status = NodeStatus.IsActive | NodeStatus.BranchTaken | NodeStatus.TrueValue },
+                new DirectiveInfo { Kind = SyntaxKind.EndIfDirectiveTrivia, Status = NodeStatus.IsActive });
+            VerifyDeclarations(node, new DeclarationInfo { Kind = SyntaxKind.VariableDeclarationStatement, Text = "a" });
+        }
+
+        [Fact]
         public void TestDirectiveAfterSingleLineComment()
         {
             const string text = @"
