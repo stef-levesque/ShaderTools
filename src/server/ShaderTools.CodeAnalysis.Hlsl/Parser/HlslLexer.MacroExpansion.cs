@@ -84,36 +84,53 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Parser
                     throw new ArgumentOutOfRangeException();
             }
 
-            // Push the current macro onto the stack - this prevents recursive expansion.
-            _currentlyExpandingMacros.Push(directive);
+            switch (_mode)
+            {
+                case LexerMode.Syntax:
+                    // Push the current macro onto the stack - this prevents recursive expansion.
+                    _currentlyExpandingMacros.Push(directive);
 
-            // Scan macro body for nested macros.
-            expandedTokens = ExpandNestedMacro(new NestedMacroExpansionLexer(macroBody));
+                    if (_mode == LexerMode.Syntax)
+                    {
+                        // Scan macro body for nested macros.
+                        expandedTokens = ExpandNestedMacro(new NestedMacroExpansionLexer(macroBody));
 
-            // Relex identifier tokens, because at this point keywords are stored as identifiers.
-            for (var i = 0; i < expandedTokens.Count; i++)
-                if (expandedTokens[i].Kind == SyntaxKind.IdentifierToken)
-                {
-                    var relexedToken = new HlslLexer(new SourceFile(SourceText.From(expandedTokens[i].Text), null)).Lex(LexerMode.Syntax);
-                    expandedTokens[i] = expandedTokens[i].WithKind(relexedToken.Kind).WithContextualKind(relexedToken.ContextualKind);
-                }
+                        // Relex identifier tokens, because at this point keywords are stored as identifiers.
+                        for (var i = 0; i < expandedTokens.Count; i++)
+                            if (expandedTokens[i].Kind == SyntaxKind.IdentifierToken)
+                            {
+                                var relexedToken = new HlslLexer(new SourceFile(SourceText.From(expandedTokens[i].Text), null)).Lex(LexerMode.Syntax);
+                                expandedTokens[i] = expandedTokens[i].WithKind(relexedToken.Kind).WithContextualKind(relexedToken.ContextualKind);
+                            }
 
-            var localExpandedTokens = expandedTokens;
-            expandedTokens = expandedTokens
-                .Select((x, i) =>
-                {
-                    var result = x
-                        .WithOriginalMacroReference(macroReference, i == 0)
-                        .WithSpan(macroReference.SourceRange, macroReference.FileSpan);
-                    if (i == 0)
-                        result = result.WithLeadingTrivia(token.LeadingTrivia);
-                    if (i == localExpandedTokens.Count - 1)
-                        result = result.WithTrailingTrivia(lastToken.TrailingTrivia);
-                    return result;
-                })
-                .ToList();
+                        var localExpandedTokens = expandedTokens;
+                        expandedTokens = expandedTokens
+                            .Select((x, i) =>
+                            {
+                                var result = x
+                                    .WithOriginalMacroReference(macroReference, i == 0)
+                                    .WithSpan(macroReference.SourceRange, macroReference.FileSpan);
+                                if (i == 0)
+                                    result = result.WithLeadingTrivia(token.LeadingTrivia);
+                                if (i == localExpandedTokens.Count - 1)
+                                    result = result.WithTrailingTrivia(lastToken.TrailingTrivia);
+                                return result;
+                            })
+                            .ToList();
+                    }
 
-            _currentlyExpandingMacros.Pop();
+                    _currentlyExpandingMacros.Pop();
+                    break;
+
+                case LexerMode.Directive: // If we're in the middle of parsing a directive, don't expand macro references.
+                    expandedTokens = macroBody
+                        .Select((x, i) => x.WithOriginalMacroReference(macroReference, i == 0).WithSpan(macroReference.SourceRange, macroReference.FileSpan))
+                        .ToList();
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             return true;
         }
