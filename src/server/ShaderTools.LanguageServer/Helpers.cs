@@ -64,7 +64,9 @@ namespace ShaderTools.LanguageServer
         {
             var sourceFileSpan = diagnostic.FileSpan;
 
-            var linePositionSpan = ToRange(sourceFileSpan.File.Text, sourceFileSpan.Span);
+            var linePositionSpan = sourceFileSpan.File.IsRootFile
+                ? ToRange(diagnostic.LogicalDocument, sourceFileSpan.Span)
+                : ToRange(sourceFileSpan.File.Text, sourceFileSpan.Span);
 
             return new Diagnostic
             {

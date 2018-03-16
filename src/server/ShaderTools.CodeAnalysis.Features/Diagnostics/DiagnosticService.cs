@@ -46,23 +46,23 @@ namespace ShaderTools.CodeAnalysis.Diagnostics
                     continue;
 
                 foreach (var diagnostic in syntaxTree.GetDiagnostics())
-                    result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SyntaxParsing));
+                    result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SyntaxParsing, logicalDocument));
 
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var semanticModel = await logicalDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                 if (semanticModel != null)
                     foreach (var diagnostic in semanticModel.GetDiagnostics())
-                        result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SemanticAnalysis));
+                        result.Add(MapDiagnostic(syntaxTree, diagnostic, DiagnosticSource.SemanticAnalysis, logicalDocument));
             }
 
             return result.ToImmutable();
         }
 
-        private static MappedDiagnostic MapDiagnostic(SyntaxTreeBase syntaxTree, Diagnostic diagnostic, DiagnosticSource source)
+        private static MappedDiagnostic MapDiagnostic(SyntaxTreeBase syntaxTree, Diagnostic diagnostic, DiagnosticSource source, LogicalDocument logicalDocument)
         {
             var fileSpan = syntaxTree.GetSourceFileSpan(diagnostic.SourceRange);
-            return new MappedDiagnostic(diagnostic, source, fileSpan);
+            return new MappedDiagnostic(diagnostic, source, fileSpan, logicalDocument);
         }
     }
 }

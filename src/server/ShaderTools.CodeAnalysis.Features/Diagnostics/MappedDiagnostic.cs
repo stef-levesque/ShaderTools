@@ -7,12 +7,14 @@ namespace ShaderTools.CodeAnalysis.Diagnostics
         public Diagnostic Diagnostic { get; }
         public SourceFileSpan FileSpan { get; }
         public DiagnosticSource Source { get; }
+        public LogicalDocument LogicalDocument { get; }
 
-        public MappedDiagnostic(Diagnostic diagnostic, DiagnosticSource source, SourceFileSpan fileSpan)
+        public MappedDiagnostic(Diagnostic diagnostic, DiagnosticSource source, SourceFileSpan fileSpan, LogicalDocument logicalDocument)
         {
             Diagnostic = diagnostic;
             FileSpan = fileSpan;
             Source = source;
+            LogicalDocument = logicalDocument;
         }
     }
 }
