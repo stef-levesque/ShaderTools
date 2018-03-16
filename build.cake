@@ -12,7 +12,8 @@ Task("Clean")
 
 Task("Restore")
     .Does(() => {
-        NuGetRestore("src");
+        NuGetRestore("src/server");
+        NuGetRestore("src/clients/vs");
     });
 
 GitVersion versionInfo = null;
