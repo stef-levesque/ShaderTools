@@ -27,8 +27,6 @@ Task("Version")
             OutputType = GitVersionOutput.BuildServer
         });
         versionInfo = GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });
-
-        AppVeyor.UpdateBuildVersion(versionInfo.FullSemVer);
     });
 
 var msBuildSettings = new MSBuildSettings()
