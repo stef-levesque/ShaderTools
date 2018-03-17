@@ -33,7 +33,8 @@ Task("BuildServer")
 
 Task("BuildClientVS")
     .Does(() => {
-        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln");
+        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", 
+            new MSBuildSettings().SetMSBuildPlatform(MSBuildPlatform.x86)); // VSSDK requires x86
     });
 
 Task("BuildClientVSCode")
