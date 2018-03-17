@@ -20,7 +20,7 @@ GitVersion versionInfo = null;
 Task("Version")
     .Does(() => {
         GitVersion(new GitVersionSettings {
-            UpdateAssemblyInfo = true,
+            UpdateAssemblyInfo = false,
             OutputType = GitVersionOutput.BuildServer
         });
         versionInfo = GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });        
