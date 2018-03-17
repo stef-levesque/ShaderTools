@@ -17,7 +17,7 @@ namespace ShaderTools.LanguageServer
             {
                 syntax.DefineOption("launchdebugger", ref launchDebugger, false, "Set whether to launch the debugger or not.");
                 syntax.DefineOption("logfilepath", ref logFilePath, true, "Fully qualified path to the log file.");
-                syntax.DefineOption("loglevel", ref logLevel, x => Enum.Parse<LogLevel>(x), false, "Logging level.");
+                syntax.DefineOption("loglevel", ref logLevel, x =>  (LogLevel) Enum.Parse(typeof(LogLevel), x), false, "Logging level.");
             });
 
             if (launchDebugger)
