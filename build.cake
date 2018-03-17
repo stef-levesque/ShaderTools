@@ -1,6 +1,8 @@
 #tool "nuget:?package=GitVersion.CommandLine"
 
 var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
+
 var outputDir = "./artifacts/";
 
 Task("Clean")
@@ -18,23 +20,29 @@ Task("Restore")
 
 GitVersion versionInfo = null;
 Task("Version")
+    .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .Does(() => {
         GitVersion(new GitVersionSettings {
             UpdateAssemblyInfo = false,
             OutputType = GitVersionOutput.BuildServer
         });
-        versionInfo = GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });        
+        versionInfo = GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });
+
+        AppVeyor.UpdateBuildVersion(versionInfo.FullSemVer);
     });
+
+var msBuildSettings = new MSBuildSettings()
+    .SetConfiguration(configuration)
+    .SetMSBuildPlatform(MSBuildPlatform.x86)); // VSSDK requires x86
 
 Task("BuildServer")
     .Does(() => {
-        MSBuild("./src/server/ShaderTools.LanguageServer.sln");
+        MSBuild("./src/server/ShaderTools.LanguageServer.sln", msBuildSettings);
     });
 
 Task("BuildClientVS")
     .Does(() => {
-        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", 
-            new MSBuildSettings().SetMSBuildPlatform(MSBuildPlatform.x86)); // VSSDK requires x86
+        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", msBuildSettings);
     });
 
 Task("BuildClientVSCode")
@@ -62,7 +70,24 @@ Task("Package")
         // TODO
     });
 
+Task("UploadArtifacts")
+    .Description("Uploads artifacts to AppVeyor")
+    .IsDependentOn("Package")
+    .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
+    .Does(() =>
+    {
+        var vsixPath = $"src\clients\vs\ShaderTools.VisualStudio\bin\{configuration}\ShaderTools.VisualStudio.vsix";
+        AppVeyor.UploadArtifact(vsixPath);
+    });
+
+Task("AppVeyor")
+    .IsDependentOn("Build")
+    .IsDependentOn("Test")
+    .IsDependentOn("Package")
+    .IsDependentOn("UploadArtifacts");
+
 Task("Default")
-    .IsDependentOn("Package");
+    .IsDependentOn("Build")
+    .IsDependentOn("Test");
 
 RunTarget(target);

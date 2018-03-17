@@ -7,7 +7,7 @@ configuration:
   - Release
 
 build_script:
-  - ps: .\build.ps1
+  - ps: .\build.ps1 -Target "Appveyor" -Configuration "Release"
 
 test: off
 skip_tags: true
