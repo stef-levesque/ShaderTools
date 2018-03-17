@@ -2,10 +2,10 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
         <Identity Id="ShaderTools.VisualStudio.d021429f-deae-410e-b18e-7b37a306bf5b" Version="1.0" Language="en-US" Publisher="Tim Jones" />
-        <DisplayName>ShaderTools.VisualStudio</DisplayName>
+        <DisplayName>Shader Tools for Visual Studio</DisplayName>
         <Description xml:space="preserve">Enhanced support for editing HLSL and Unity ShaderLab shaders in Visual Studio</Description>
         <MoreInfo>https://github.com/ShaderTools/ShaderTools</MoreInfo>
-        <Icon>icon.png</Icon>
+        <Icon>Resources\icon.png</Icon>
         <Tags>HLSL, Unity, ShaderLab, shader</Tags>
     </Metadata>
     <Installation>

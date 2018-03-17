@@ -8,7 +8,7 @@ namespace ShaderTools.VisualStudio
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
-    [Guid(ShaderToolsPackage.PackageGuidString)]
+    [Guid("e52029c2-bf90-4c5c-ad38-98cb294e1e9b")]
 
     [ProvideLanguageExtension(typeof(HlslLanguageInfo), ".hlsl")]
     [ProvideLanguageExtension(typeof(HlslLanguageInfo), ".hlsli")]
@@ -23,8 +23,6 @@ namespace ShaderTools.VisualStudio
 
     public sealed class ShaderToolsPackage : AsyncPackage
     {
-        public const string PackageGuidString = "e52029c2-bf90-4c5c-ad38-98cb294e1e9b";
-
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);

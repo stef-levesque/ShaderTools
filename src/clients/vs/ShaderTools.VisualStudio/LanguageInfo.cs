@@ -35,7 +35,7 @@ namespace ShaderTools.VisualStudio
 
         public int GetLanguageName(out string bstrName)
         {
-            bstrName = ;
+            bstrName = LanguageName;
 
             return VSConstants.S_OK;
         }
