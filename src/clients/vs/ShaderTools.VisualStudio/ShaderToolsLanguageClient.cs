@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -7,14 +8,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.Utilities;
 
 namespace ShaderTools.VisualStudio.LanguageClients
 {
-    internal abstract class LanguageClientBase : ILanguageClient
+    [ContentType(ContentTypeDefinitions.Hlsl)]
+    [ContentType(ContentTypeDefinitions.ShaderLab)]
+    [Export(typeof(ILanguageClient))]
+    internal sealed class ShaderToolsLanguageClient : ILanguageClient
     {
-        protected abstract string LanguageName { get; }
-
-        public string Name => $"{LanguageName} Language Extension";
+        public string Name => $"Shader Tools Language Extension";
 
         public IEnumerable<string> ConfigurationSections => null;
 
@@ -47,7 +50,9 @@ namespace ShaderTools.VisualStudio.LanguageClients
 
             if (process.Start())
             {
-                return new Connection(process.StandardOutput.BaseStream, process.StandardInput.BaseStream);
+                return new Connection(
+                    Console.OpenStandardOutput(),
+                    Console.OpenStandardInput());
             }
 
             return null;
