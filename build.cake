@@ -33,7 +33,7 @@ Task("Version")
 
 var msBuildSettings = new MSBuildSettings()
     .SetConfiguration(configuration)
-    .SetMSBuildPlatform(MSBuildPlatform.x86)); // VSSDK requires x86
+    .SetMSBuildPlatform(MSBuildPlatform.x86); // VSSDK requires x86
 
 Task("BuildServer")
     .Does(() => {
@@ -76,7 +76,7 @@ Task("UploadArtifacts")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
-        var vsixPath = $"src\clients\vs\ShaderTools.VisualStudio\bin\{configuration}\ShaderTools.VisualStudio.vsix";
+        var vsixPath = $"src/clients/vs/ShaderTools.VisualStudio/bin/{configuration}/ShaderTools.VisualStudio.vsix";
         AppVeyor.UploadArtifact(vsixPath);
     });
 
