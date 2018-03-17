@@ -14,8 +14,8 @@ Task("Clean")
 
 Task("Restore")
     .Does(() => {
-        NuGetRestore("src/server/ShaderTools.LanguageServer.sln");
-        NuGetRestore("src/clients/vs/ShaderTools.VisualStudio.sln");
+        MSBuild("src/server/ShaderTools.LanguageServer.sln", new MSBuildSettings().WithTarget("restore"));
+        MSBuild("src/clients/vs/ShaderTools.VisualStudio.sln", new MSBuildSettings().WithTarget("restore"));
     });
 
 GitVersion versionInfo = null;
