@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace ShaderTools.VisualStudio
 {
+#pragma warning disable CS0649
     internal static class ContentTypeDefinitions
     {
         public const string Hlsl = "hlsl";
@@ -11,40 +12,41 @@ namespace ShaderTools.VisualStudio
         [Export]
         [Name(Hlsl)]
         [BaseDefinition(CodeRemoteContentDefinition.CodeRemoteContentTypeName)]
-        internal static ContentTypeDefinition HlslContentTypeDefinition;
+        public static readonly ContentTypeDefinition HlslContentTypeDefinition;
 
         [Export, ContentType(Hlsl), FileExtension(".hlsl")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionHlsl;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionHlsl;
 
         [Export, ContentType(Hlsl), FileExtension(".hlsli")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionHlsli;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionHlsli;
 
         [Export, ContentType(Hlsl), FileExtension(".fx")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionFx;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionFx;
 
         [Export, ContentType(Hlsl), FileExtension(".fxh")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionFxh;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionFxh;
 
         [Export, ContentType(Hlsl), FileExtension(".vsh")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionVsh;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionVsh;
 
         [Export, ContentType(Hlsl), FileExtension(".psh")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionPsh;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionPsh;
 
         [Export, ContentType(Hlsl), FileExtension(".cginc")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionCginc;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionCginc;
 
         [Export, ContentType(Hlsl), FileExtension(".compute")]
-        internal static FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionCompute;
+        internal static readonly FileExtensionToContentTypeDefinition HlslFileExtensionDefinitionCompute;
 
         public const string ShaderLab = "shaderlab";
 
         [Export]
         [Name(ShaderLab)]
         [BaseDefinition(CodeRemoteContentDefinition.CodeRemoteContentTypeName)]
-        internal static ContentTypeDefinition ShaderLabContentTypeDefinition;
+        internal static readonly ContentTypeDefinition ShaderLabContentTypeDefinition;
 
         [Export, ContentType(ShaderLab), FileExtension(".shader")]
-        internal static FileExtensionToContentTypeDefinition ShaderLabFileExtensionDefinition;
+        internal static readonly FileExtensionToContentTypeDefinition ShaderLabFileExtensionDefinition;
     }
+#pragma warning restore CS0649
 }

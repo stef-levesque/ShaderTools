@@ -26,7 +26,10 @@ namespace ShaderTools.VisualStudio.LanguageClients
         public IEnumerable<string> FilesToWatch => null;
 
         public event AsyncEventHandler<EventArgs> StartAsync;
+
+#pragma warning disable CS0067
         public event AsyncEventHandler<EventArgs> StopAsync;
+#pragma warning restore CS0067
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
