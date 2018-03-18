@@ -1,3 +1,6 @@
+#addin "nuget:?package=Cake.Npm"
+#addin "nuget:?package=Cake.VsCode"
+
 #tool "nuget:?package=GitVersion.CommandLine"
 
 var target = Argument("target", "Default");
@@ -33,10 +36,14 @@ var msBuildSettings = new MSBuildSettings()
     .SetConfiguration(configuration)
     .SetMSBuildPlatform(MSBuildPlatform.x86); // VSSDK requires x86
 
+// Server
+
 Task("BuildServer")
     .Does(() => {
         MSBuild("./src/server/ShaderTools.LanguageServer.sln", msBuildSettings);
     });
+
+// VS client
 
 Task("CopyServerToClientVS")
     .Does(() => {
@@ -49,7 +56,39 @@ Task("BuildClientVS")
         MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", msBuildSettings);
     });
 
+// VSCode client
+
+Task("VSCode-Client-Clean")
+    .Does(() =>
+    {
+        CleanDirectories(new[] { "./build-results" });
+    });
+
+Task("VSCode-Client-Npm-Install")
+    .Does(() =>
+    {
+        var settings = new NpmInstallSettings();
+        settings.LogLevel = NpmLogLevel.Silent;
+        NpmInstall(settings);
+    });
+
+Task("VSCode-Client-Package-Extension")
+    //.IsDependentOn("Update-Project-Json-Version")
+    .IsDependentOn("VSCode-Client-Npm-Install")
+    //.IsDependentOn("Install-TypeScript")
+    //.IsDependentOn("Install-Vsce")
+    .IsDependentOn("VSCode-Client-Clean")
+    .Does(() => {
+        var buildResultDir = Directory("./build-results");
+        var packageFile = File("shadertools-vscode-" + versionInfo.SemVer + ".vsix");
+
+        VscePackage(new VscePackageSettings() {
+            OutputFilePath = buildResultDir + packageFile
+        });
+    });
+
 Task("BuildClientVSCode")
+    .IsDependentOn("VSCode-Client-Package-Extension")
     .Does(() => {
         // TODO
     });
