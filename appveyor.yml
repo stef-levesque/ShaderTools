@@ -10,7 +10,7 @@ configuration:
   - Release
 
 build_script:
-  - ps: .\build.ps1 -Target "Appveyor" -Configuration "Release"
+  - ps: .\build.ps1 -Target "Appveyor" -Configuration "Release" --settings_skipverification=true
 
 test: off
 skip_tags: true

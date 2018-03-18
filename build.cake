@@ -1,5 +1,5 @@
-#addin "nuget:?package=Cake.Npm"
-#addin "nuget:?package=Cake.VsCode"
+#addin "nuget:?package=Cake.Npm&version=0.10.0"
+#addin "nuget:?package=Cake.VsCode&version=0.8.0"
 
 #tool "nuget:?package=GitVersion.CommandLine"
 
