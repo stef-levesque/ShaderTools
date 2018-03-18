@@ -17,11 +17,15 @@ Task("Clean")
 
 Task("Restore")
     .Does(() => {
-        MSBuild("src/server/ShaderTools.LanguageServer.sln", new MSBuildSettings().WithTarget("restore"));
-        MSBuild("src/clients/vs/ShaderTools.VisualStudio.sln", new MSBuildSettings().WithTarget("restore"));
+        var restoreMSBuildSettings = new MSBuildSettings()
+            .WithTarget("restore")
+            .SetVerbosity(Verbosity.Quiet);
+
+        MSBuild("src/server/ShaderTools.LanguageServer.sln", restoreMSBuildSettings);
+        MSBuild("src/clients/vs/ShaderTools.VisualStudio.sln", restoreMSBuildSettings);
     });
 
-GitVersion versionInfo = null;
+GitVersion versionInfo = new GitVersion { SemVer = "0.0.1"};
 Task("Version")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .Does(() => {
@@ -62,13 +66,24 @@ Task("BuildClientVS")
 Task("VSCode-Client-Clean")
     .Does(() =>
     {
-        CleanDirectories(new[] { "./build-results" });
+        CleanDirectories(new[] { "./src/clients/vscode/build-results" });
     });
 
 Task("VSCode-Client-Npm-Install")
     .Does(() =>
     {
+        NpmInstall(new NpmInstallSettings {
+            WorkingDirectory = "./src/clients/vscode",
+            LogLevel = NpmLogLevel.Silent
+        });
+    });
+
+Task("VSCode-Client-Install-Vsce")
+    .Does(() =>
+    {
         var settings = new NpmInstallSettings();
+        settings.Global = true;
+        settings.AddPackage("vsce", "1.37.5");
         settings.LogLevel = NpmLogLevel.Silent;
         NpmInstall(settings);
     });
@@ -77,13 +92,14 @@ Task("VSCode-Client-Package-Extension")
     //.IsDependentOn("Update-Project-Json-Version")
     .IsDependentOn("VSCode-Client-Npm-Install")
     //.IsDependentOn("Install-TypeScript")
-    //.IsDependentOn("Install-Vsce")
+    .IsDependentOn("VSCode-Client-Install-Vsce")
     .IsDependentOn("VSCode-Client-Clean")
     .Does(() => {
-        var buildResultDir = Directory("./build-results");
+        var buildResultDir = Directory("./src/clients/vscode/build-results");
         var packageFile = File("shadertools-vscode-" + versionInfo.SemVer + ".vsix");
 
         VscePackage(new VscePackageSettings() {
+            WorkingDirectory = "./src/clients/vscode",
             OutputFilePath = buildResultDir + packageFile
         });
     });
@@ -120,8 +136,11 @@ Task("UploadArtifacts")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
-        var vsixPath = $"src/clients/vs/ShaderTools.VisualStudio/bin/{configuration}/ShaderTools.VisualStudio.vsix";
-        AppVeyor.UploadArtifact(vsixPath);
+        // VS
+        AppVeyor.UploadArtifact($"src/clients/vs/ShaderTools.VisualStudio/bin/{configuration}/ShaderTools.VisualStudio.vsix");
+
+        // VSCode
+        AppVeyor.UploadArtifact($"src/clients/vscode/build-results/shadertools-vscode-" + versionInfo.SemVer + ".vsix");
     });
 
 Task("AppVeyor")

@@ -9,8 +9,10 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://github.com/ShaderTools/ShaderTools/tree/master/src/clients/vscode/README.md",
-  "categories": [ "Languages" ],
-  "icon": "../../art/logo.png",
+  "categories": [
+    "Languages"
+  ],
+  "icon": "art/logo.png",
   "galleryBanner": {
     "color": "#5C2D91",
     "theme": "dark"
@@ -30,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^6.0.40",
     "typescript": "^2.7.2",
-    "vsce": "^1.18.0",
+    "vsce": "^1.37.5",
     "vscode": "^1.1.13"
   },
   "extensionDependencies": [
@@ -38,8 +40,8 @@
     "vscode.shaderlab"
   ],
   "scripts": {
-    "compile": "tsc -p ./",
-    "compile-watch": "tsc -watch -p ./",
+    "vscode:prepublish": "tsc -p ./ || echo done",
+    "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "enableProposedApi": true,
