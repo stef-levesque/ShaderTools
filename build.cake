@@ -38,7 +38,13 @@ Task("BuildServer")
         MSBuild("./src/server/ShaderTools.LanguageServer.sln", msBuildSettings);
     });
 
+Task("CopyServerToClientVS")
+    .Does(() => {
+        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio/Server");
+    });
+
 Task("BuildClientVS")
+    .IsDependentOn("CopyServerToClientVS")
     .Does(() => {
         MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", msBuildSettings);
     });

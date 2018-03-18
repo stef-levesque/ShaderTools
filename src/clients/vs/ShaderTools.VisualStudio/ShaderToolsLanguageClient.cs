@@ -35,27 +35,37 @@ namespace ShaderTools.VisualStudio.LanguageClients
         {
             await Task.Yield();
 
+            var vsixDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
             var info = new ProcessStartInfo
             {
                 FileName = Path.Combine(
-                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    vsixDirectory,
                     "Server",
                     "ShaderTools.LanguageServer.exe"),
-                Arguments = "",
+                Arguments = $@"--launchdebugger --logfilepath ""{vsixDirectory}\LanguageServerLog.txt""",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
             };
 
             var process = new Process();
             process.StartInfo = info;
 
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                var error = e.Data;
+            };
+
             if (process.Start())
             {
+                process.BeginErrorReadLine();
+
                 return new Connection(
-                    Console.OpenStandardOutput(),
-                    Console.OpenStandardInput());
+                    process.StandardOutput.BaseStream,
+                    process.StandardInput.BaseStream);
             }
 
             return null;

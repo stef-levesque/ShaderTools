@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CommandLine;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -22,8 +23,8 @@ namespace ShaderTools.LanguageServer
 
             if (launchDebugger)
             {
-                // TODO: Doesn't work yet: https://github.com/dotnet/coreclr/issues/12074
-                // Debugger.Launch();
+                // TODO: Doesn't work on .NET Core yet: https://github.com/dotnet/coreclr/issues/12074
+                Debugger.Launch();
             }
 
             LanguageServerHost languageServerHost = null;
@@ -39,6 +40,7 @@ namespace ShaderTools.LanguageServer
             }
             catch (Exception ex)
             {
+                languageServerHost?.Dispose();
                 Console.Error.WriteLine(ex);
                 return;
             }
@@ -51,6 +53,10 @@ namespace ShaderTools.LanguageServer
             {
                 Console.Error.WriteLine(ex);
                 return;
+            }
+            finally
+            {
+                languageServerHost.Dispose();
             }
         }
     }

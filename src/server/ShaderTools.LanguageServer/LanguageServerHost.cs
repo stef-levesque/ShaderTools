@@ -23,6 +23,9 @@ namespace ShaderTools.LanguageServer
         private readonly MefHostServices _exportProvider;
         private LanguageServerWorkspace _workspace;
 
+        private readonly LoggerFactory _loggerFactory;
+        private readonly Serilog.Core.Logger _logger;
+
         public LanguageServerHost(
             Stream input,
             Stream output,
@@ -31,18 +34,18 @@ namespace ShaderTools.LanguageServer
         {
             _exportProvider = CreateHostServices();
 
-            var logger = new LoggerConfiguration()
+            _logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.File(logFilePath)
                 .CreateLogger();
 
-            var loggerFactory = new LoggerFactory(
+            _loggerFactory = new LoggerFactory(
                 ImmutableArray<ILoggerProvider>.Empty, 
                 new LoggerFilterOptions { MinLevel = minLogLevel });
 
-            loggerFactory.AddSerilog(logger);
+            _loggerFactory.AddSerilog(_logger);
 
-            _server = new OmniSharp.Extensions.LanguageServer.Server.LanguageServer(input, output, loggerFactory);
+            _server = new OmniSharp.Extensions.LanguageServer.Server.LanguageServer(input, output, _loggerFactory);
             _server.OnInitialize(Initialize);
         }
 
@@ -115,6 +118,9 @@ namespace ShaderTools.LanguageServer
         public void Dispose()
         {
             _server.Dispose();
+
+            _logger.Dispose();
+            _loggerFactory.Dispose();
         }
     }
 }
