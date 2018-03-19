@@ -36,14 +36,28 @@ namespace ShaderTools.VisualStudio.LanguageClients
             await Task.Yield();
 
             var vsixDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var languageServerExe = Path.Combine(
+                vsixDirectory,
+                "Server",
+                "ShaderTools.LanguageServer.exe");
+            var languageServerArguments = $@"--logfilepath ""{vsixDirectory}/LanguageServerLog.txt""";
+
+            string fileName, arguments;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                fileName = languageServerExe;
+                arguments = languageServerArguments;
+            }
+            else
+            {
+                fileName = "mono";
+                arguments = $@"--debug --debugger-agent=transport=dt_socket,address=127.0.0.1:63000 ""{languageServerExe}"" {languageServerArguments}";
+            }
 
             var info = new ProcessStartInfo
             {
-                FileName = Path.Combine(
-                    vsixDirectory,
-                    "Server",
-                    "ShaderTools.LanguageServer.exe"),
-                Arguments = $@"--launchdebugger --logfilepath ""{vsixDirectory}\LanguageServerLog.txt""",
+                FileName = fileName,
+                Arguments = arguments,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

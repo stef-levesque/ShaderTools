@@ -295,4 +295,5 @@ tools/**
 *.xsd.cs
 
 # Language Server in VS client
-src/clients/vs/ShaderTools.VisualStudio/Server
+src/clients/vs/ShaderTools.VisualStudio.Mac/Server
+src/clients/vs/ShaderTools.VisualStudio.Windows/Server

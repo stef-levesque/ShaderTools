@@ -51,8 +51,11 @@ Task("BuildServer")
 
 Task("CopyServerToClientVS")
     .Does(() => {
-        CreateDirectory("./src/clients/vs/ShaderTools.VisualStudio/Server");
-        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio/Server");
+        CreateDirectory("./src/clients/vs/ShaderTools.VisualStudio.Windows/Server");
+        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio.Windows/Server");
+
+        CreateDirectory("./src/clients/vs/ShaderTools.VisualStudio.Mac/Server");
+        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio.Mac/Server");
     });
 
 Task("BuildClientVS")

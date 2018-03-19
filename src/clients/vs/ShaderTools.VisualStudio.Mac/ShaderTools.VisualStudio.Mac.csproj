@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoDevelop.Addins" Version="0.4.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddinReference Include="MonoDevelop.LanguageServer.Client" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Server\**\*.*">
+      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="..\ShaderTools.VisualStudio.Shared\ShaderTools.VisualStudio.Shared.projitems" Label="Shared" Condition="Exists('..\ShaderTools.VisualStudio.Shared\ShaderTools.VisualStudio.Shared.projitems')" />
+</Project>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionModel>
+    <Runtime>
+    </Runtime>
+    <Extension path="/MonoDevelop/Ide/Composition">
+        <Assembly file="ShaderTools.VisualStudio.Mac.dll" />
+    </Extension>
+</ExtensionModel>
