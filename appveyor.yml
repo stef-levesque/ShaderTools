@@ -1,7 +1,25 @@
 os: Visual Studio 2017
 
+# Branches to build
+branches:
+  only:
+    - master
+    - /release/.*/
+
+# Scripts that run after cloning repository
 install:
   - git submodule update --init --recursive
+  - if not exist gtk-sharp-2.12.45.msi appveyor DownloadFile https://xamarin.azureedge.net/GTKforWindows/Windows/gtk-sharp-2.12.45.msi
+  - msiexec /i gtk-sharp-2.12.45.msi /qn /norestart
+  - if not exist XamarinStudio-6.3.0.863.msi appveyor DownloadFile https://dl.xamarin.com/MonoDevelop/Windows/XamarinStudio-6.3.0.863.msi
+  - msiexec /i XamarinStudio-6.3.0.863.msi /qn /norestart # Use Xamarin Studio v6.x for now
+  - set MDTOOL="%ProgramFiles(x86)%\Xamarin Studio\bin"
+  - set PATH=%MDTOOL%;%PATH%
+
+# Cache files until appveyor.yml is modified.
+cache:
+  - gtk-sharp-2.12.45.msi
+  - XamarinStudio-6.3.0.863.msi
 
 assembly_info:
   patch: false

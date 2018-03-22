@@ -1,28 +1,32 @@
+// Addins
+
 #addin "nuget:?package=Cake.Npm&version=0.10.0"
 #addin "nuget:?package=Cake.VsCode&version=0.8.0"
 
+// Tools
+
 #tool "nuget:?package=GitVersion.CommandLine"
 
-var target = Argument("target", "Default");
-var configuration = Argument("configuration", "Release");
+// Setup
 
-var outputDir = "./artifacts/";
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Debug");
+
+var buildResultDir = Directory("build-results");
+
+var shouldPublish = AppVeyor.IsRunningOnAppVeyor 
+    && !AppVeyor.Environment.PullRequest.IsPullRequest
+    && AppVeyor.Environment.Repository.Name == "ShaderTools/ShaderTools"
+    && AppVeyor.Environment.Repository.Branch == "master"
+    && AppVeyor.Environment.Repository.Tag.IsTag
+    && !string.IsNullOrWhiteSpace(AppVeyor.Environment.Repository.Tag.Name);
+
+var serverBinPath = $"src/server/ShaderTools.LanguageServer/bin/{configuration}/net461/**/*";
 
 Task("Clean")
-    .Does(() => {
-        if (DirectoryExists(outputDir)) {
-            DeleteDirectory(outputDir, recursive:true);
-        }
-    });
-
-Task("Restore")
-    .Does(() => {
-        var restoreMSBuildSettings = new MSBuildSettings()
-            .WithTarget("restore")
-            .SetVerbosity(Verbosity.Quiet);
-
-        MSBuild("src/server/ShaderTools.LanguageServer.sln", restoreMSBuildSettings);
-        MSBuild("src/clients/vs/ShaderTools.VisualStudio.sln", restoreMSBuildSettings);
+    .Does(() =>
+    {
+        CleanDirectory(buildResultDir);
     });
 
 GitVersion versionInfo = new GitVersion { SemVer = "0.0.1"};
@@ -36,43 +40,101 @@ Task("Version")
         versionInfo = GitVersion(new GitVersionSettings { OutputType = GitVersionOutput.Json });
     });
 
+var msBuildSettingsForRestore = new MSBuildSettings()
+    .WithTarget("restore")
+    .SetConfiguration(configuration)
+    .SetVerbosity(Verbosity.Quiet);
+
 var msBuildSettings = new MSBuildSettings()
     .SetConfiguration(configuration)
+    .SetVerbosity(Verbosity.Quiet)
     .SetMSBuildPlatform(MSBuildPlatform.x86); // VSSDK requires x86
 
 // Server
 
-Task("BuildServer")
+Task("Server-Restore")
+    .Does(() => {
+        MSBuild("src/server/ShaderTools.LanguageServer.sln", msBuildSettingsForRestore);
+    });
+
+Task("Server-Build")
+    .IsDependentOn("Server-Restore")
     .Does(() => {
         MSBuild("./src/server/ShaderTools.LanguageServer.sln", msBuildSettings);
     });
 
-// VS client
+Task("Server")
+    .IsDependentOn("Server-Restore")
+    .IsDependentOn("Server-Build");
 
-Task("CopyServerToClientVS")
+// VS for Windows client
+
+Task("Client-VS-Windows-Restore")
     .Does(() => {
-        CreateDirectory("./src/clients/vs/ShaderTools.VisualStudio.Windows/Server");
-        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio.Windows/Server");
-
-        CreateDirectory("./src/clients/vs/ShaderTools.VisualStudio.Mac/Server");
-        CopyFiles("./src/server/ShaderTools.LanguageServer/bin/Release/net461/**/*", "./src/clients/vs/ShaderTools.VisualStudio.Mac/Server");
+        MSBuild("src/clients/vs/ShaderTools.VisualStudio.Windows.sln", msBuildSettingsForRestore);
     });
 
-Task("BuildClientVS")
-    .IsDependentOn("CopyServerToClientVS")
+Task("Client-VS-Windows-CopyServer")
     .Does(() => {
-        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.sln", msBuildSettings);
+        var serverDir = Directory("src/clients/vs/ShaderTools.VisualStudio.Windows/Server");
+        EnsureDirectoryExists(serverDir);
+        CopyFiles(serverBinPath, serverDir);
+    });
+
+Task("Client-VS-Windows-Build")
+    .IsDependentOn("Server")
+    .IsDependentOn("Client-VS-Windows-Restore")
+    .IsDependentOn("Client-VS-Windows-CopyServer")
+    .WithCriteria(() => IsRunningOnWindows())
+    .Does(() => {
+        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.Windows.sln", msBuildSettings);
+
+        CopyFile(
+            $"src/clients/vs/ShaderTools.VisualStudio.Windows/bin/{configuration}/ShaderTools.VisualStudio.Windows.vsix", 
+            buildResultDir + File($"ShaderTools-VisualStudio-Windows-{versionInfo.FullSemVer}.vsix"));
+    });
+
+Task("Client-VS-Windows-Publish")
+    .IsDependentOn("Client-VS-Windows-Build")
+    .Does(() => {
+        // TODO: Publish to VS Gallery using web browser automation
+    });
+
+// VS for Mac client
+
+Task("Client-VS-Mac-Restore")
+    .Does(() => {
+        MSBuild("src/clients/vs/ShaderTools.VisualStudio.Mac.sln", msBuildSettingsForRestore);
+    });
+
+Task("Client-VS-Mac-CopyServer")
+    .Does(() => {
+        var serverDir = Directory("src/clients/vs/ShaderTools.VisualStudio.Mac/Server");
+        EnsureDirectoryExists(serverDir);
+        CopyFiles(serverBinPath, serverDir);
+    });
+
+Task("Client-VS-Mac-Build")
+    .IsDependentOn("Server")
+    .IsDependentOn("Client-VS-Mac-Restore")
+    .IsDependentOn("Client-VS-Mac-CopyServer")
+    .Does(() => {
+        var msBuildSettingsPackageAddIn = new MSBuildSettings()
+            .WithTarget("PackageAddin")
+            .SetConfiguration(configuration)
+            .SetVerbosity(Verbosity.Quiet);
+        MSBuild("./src/clients/vs/ShaderTools.VisualStudio.Mac.sln", msBuildSettingsPackageAddIn);
+    });
+
+Task("Client-VS-Mac-Publish")
+    .IsDependentOn("Client-VS-Mac-Build")
+    .Does(() => {
+        // TODO: Publish to MonoDevelop addins repo
     });
 
 // VSCode client
 
-Task("VSCode-Client-Clean")
-    .Does(() =>
-    {
-        CleanDirectories(new[] { "./src/clients/vscode/build-results" });
-    });
-
-Task("VSCode-Client-Npm-Install")
+Task("Client-VSCode-Npm-Install")
     .Does(() =>
     {
         NpmInstall(new NpmInstallSettings {
@@ -81,7 +143,8 @@ Task("VSCode-Client-Npm-Install")
         });
     });
 
-Task("VSCode-Client-Install-Vsce")
+Task("Client-VSCode-Install-Vsce")
+    .IsDependentOn("Client-VSCode-Npm-Install")
     .Does(() =>
     {
         var settings = new NpmInstallSettings();
@@ -91,35 +154,43 @@ Task("VSCode-Client-Install-Vsce")
         NpmInstall(settings);
     });
 
-Task("VSCode-Client-Package-Extension")
-    //.IsDependentOn("Update-Project-Json-Version")
-    .IsDependentOn("VSCode-Client-Npm-Install")
-    //.IsDependentOn("Install-TypeScript")
-    .IsDependentOn("VSCode-Client-Install-Vsce")
-    .IsDependentOn("VSCode-Client-Clean")
+Task("Client-VSCode-Package-Extension")
+    .IsDependentOn("Client-VSCode-Install-Vsce")
     .Does(() => {
-        var buildResultDir = Directory("./src/clients/vscode/build-results");
-        var packageFile = File("shadertools-vscode-" + versionInfo.SemVer + ".vsix");
+        var packageFile = File("shadertools-vscode-" + versionInfo.FullSemVer + ".vsix");
 
         VscePackage(new VscePackageSettings() {
-            WorkingDirectory = "./src/clients/vscode",
+            WorkingDirectory = "src/clients/vscode",
             OutputFilePath = buildResultDir + packageFile
         });
     });
 
-Task("BuildClientVSCode")
-    .IsDependentOn("VSCode-Client-Package-Extension")
+Task("Client-VSCode-Build")
+    .IsDependentOn("Server")
+    //.IsDependentOn("Client-VSCode-Update-Project-Json-Version")
+    .IsDependentOn("Client-VSCode-Npm-Install")
+    //.IsDependentOn("Client-VSCode-Install-TypeScript")
+    .IsDependentOn("Client-VSCode-Install-Vsce")
+    .IsDependentOn("Client-VSCode-Package-Extension")
     .Does(() => {
         // TODO
     });
 
+Task("Client-VSCode-Publish")
+    .IsDependentOn("Client-VSCode-Build")
+    .Does(() => {
+        // TODO: Publish to VS Gallery using VscePublish
+    });
+
+// General
+
 Task("Build")
     .IsDependentOn("Clean")
     .IsDependentOn("Version")
-    .IsDependentOn("Restore")
-    .IsDependentOn("BuildServer")
-    .IsDependentOn("BuildClientVS")
-    .IsDependentOn("BuildClientVSCode");
+    .IsDependentOn("Server")
+    .IsDependentOn("Client-VS-Windows-Build")
+    .IsDependentOn("Client-VS-Mac-Build")
+    .IsDependentOn("Client-VSCode-Build");
 
 Task("Test")
     .IsDependentOn("Build")
@@ -127,30 +198,36 @@ Task("Test")
         MSTest("./src/server/*.Tests");
     });
 
-Task("Package")
-    .IsDependentOn("Test")
-    .Does(() => {
-        // TODO
-    });
-
 Task("UploadArtifacts")
-    .Description("Uploads artifacts to AppVeyor")
-    .IsDependentOn("Package")
+    .IsDependentOn("Test")
     .WithCriteria(() => AppVeyor.IsRunningOnAppVeyor)
     .Does(() =>
     {
-        // VS
-        AppVeyor.UploadArtifact($"src/clients/vs/ShaderTools.VisualStudio/bin/{configuration}/ShaderTools.VisualStudio.vsix");
-
-        // VSCode
-        AppVeyor.UploadArtifact($"src/clients/vscode/build-results/shadertools-vscode-" + versionInfo.SemVer + ".vsix");
+        foreach (var file in System.IO.Directory.GetFiles(buildResultDir))
+        {
+            AppVeyor.UploadArtifact(file);
+        }
     });
+
+Task("GitHubRelease")
+    .WithCriteria(() => shouldPublish)
+    .Does(() =>
+    {
+        // TODO: Create GitHub release and upload assets
+    });
+
+Task("Publish")
+    .IsDependentOn("GitHubRelease")
+    .IsDependentOn("Client-VS-Windows-Publish")
+    .IsDependentOn("Client-VS-Mac-Publish")
+    .IsDependentOn("Client-VSCode-Publish")
+    .WithCriteria(() => shouldPublish);
 
 Task("AppVeyor")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
-    .IsDependentOn("Package")
-    .IsDependentOn("UploadArtifacts");
+    .IsDependentOn("UploadArtifacts")
+    .IsDependentOn("Publish");
 
 Task("Default")
     .IsDependentOn("Build")
