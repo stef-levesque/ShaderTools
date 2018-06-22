@@ -15,7 +15,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ExpressionStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var es = (ExpressionStatementSyntax)statement;
             Assert.NotNull(es.Expression);
@@ -34,7 +34,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ExpressionStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var es = (ExpressionStatementSyntax)statement;
             Assert.NotNull(es.Expression);
@@ -45,6 +45,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.False(es.SemicolonToken.IsMissing);
         }
 
+        [Theory]
         [InlineData(SyntaxKind.PlusPlusToken)]
         [InlineData(SyntaxKind.MinusMinusToken)]
         public void TestPostfixUnaryOperator(SyntaxKind kind)
@@ -55,7 +56,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ExpressionStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var es = (ExpressionStatementSyntax)statement;
             Assert.NotNull(es.Expression);
@@ -78,12 +79,12 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
             Assert.Equal("T", ds.Declaration.Type.ToString());
-            Assert.Equal(1, ds.Declaration.Variables.Count);
+            Assert.Single(ds.Declaration.Variables);
 
             Assert.NotNull(ds.Declaration.Variables[0].Identifier);
             Assert.Equal("a", ds.Declaration.Variables[0].Identifier.ToString());
@@ -102,17 +103,17 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
             Assert.Equal("T", ds.Declaration.Type.ToString());
-            Assert.Equal(1, ds.Declaration.Variables.Count);
+            Assert.Single(ds.Declaration.Variables);
 
             Assert.NotNull(ds.Declaration.Variables[0].Identifier);
             Assert.Equal("a", ds.Declaration.Variables[0].Identifier.ToString());
             Assert.Null(ds.Declaration.Variables[0].Initializer);
-            Assert.Equal(1, ds.Declaration.Variables[0].ArrayRankSpecifiers.Count);
+            Assert.Single(ds.Declaration.Variables[0].ArrayRankSpecifiers);
             Assert.Equal("2", ds.Declaration.Variables[0].ArrayRankSpecifiers[0].Dimension.ToString());
 
             Assert.NotNull(ds.SemicolonToken);
@@ -128,7 +129,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
@@ -160,17 +161,17 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
             Assert.Equal("T", ds.Declaration.Type.ToString());
-            Assert.Equal(1, ds.Declaration.Variables.Count);
+            Assert.Single(ds.Declaration.Variables);
 
             Assert.NotNull(ds.Declaration.Variables[0].Identifier);
             Assert.Equal("a", ds.Declaration.Variables[0].Identifier.ToString());
             Assert.NotNull(ds.Declaration.Variables[0].Initializer);
-            Assert.Equal(ds.Declaration.Variables[0].Initializer.Kind, SyntaxKind.EqualsValueClause);
+            Assert.Equal(SyntaxKind.EqualsValueClause, ds.Declaration.Variables[0].Initializer.Kind);
 
             var initializer = (EqualsValueClauseSyntax) ds.Declaration.Variables[0].Initializer;
             Assert.NotNull(initializer.EqualsToken);
@@ -191,7 +192,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
@@ -200,7 +201,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
 
             Assert.NotNull(ds.Declaration.Variables[0].Identifier);
             Assert.Equal("a", ds.Declaration.Variables[0].Identifier.ToString());
-            Assert.Equal(ds.Declaration.Variables[0].Initializer.Kind, SyntaxKind.EqualsValueClause);
+            Assert.Equal(SyntaxKind.EqualsValueClause, ds.Declaration.Variables[0].Initializer.Kind);
             var initializer = (EqualsValueClauseSyntax) ds.Declaration.Variables[0].Initializer;
             Assert.NotNull(initializer.EqualsToken);
             Assert.False(initializer.EqualsToken.IsMissing);
@@ -209,7 +210,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
 
             Assert.NotNull(ds.Declaration.Variables[1].Identifier);
             Assert.Equal("b", ds.Declaration.Variables[1].Identifier.ToString());
-            Assert.Equal(ds.Declaration.Variables[1].Initializer.Kind, SyntaxKind.EqualsValueClause);
+            Assert.Equal(SyntaxKind.EqualsValueClause, ds.Declaration.Variables[1].Initializer.Kind);
             initializer = (EqualsValueClauseSyntax)ds.Declaration.Variables[1].Initializer;
             Assert.NotNull(initializer.EqualsToken);
             Assert.False(initializer.EqualsToken.IsMissing);
@@ -218,7 +219,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
 
             Assert.NotNull(ds.Declaration.Variables[2].Identifier);
             Assert.Equal("c", ds.Declaration.Variables[2].Identifier.ToString());
-            Assert.Equal(ds.Declaration.Variables[2].Initializer.Kind, SyntaxKind.EqualsValueClause);
+            Assert.Equal(SyntaxKind.EqualsValueClause, ds.Declaration.Variables[2].Initializer.Kind);
             initializer = (EqualsValueClauseSyntax)ds.Declaration.Variables[2].Initializer;
             Assert.NotNull(initializer.EqualsToken);
             Assert.False(initializer.EqualsToken.IsMissing);
@@ -238,17 +239,17 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.VariableDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (VariableDeclarationStatementSyntax)statement;
             Assert.NotNull(ds.Declaration.Type);
             Assert.Equal("T", ds.Declaration.Type.ToString());
-            Assert.Equal(1, ds.Declaration.Variables.Count);
+            Assert.Single(ds.Declaration.Variables);
 
             Assert.NotNull(ds.Declaration.Variables[0].Identifier);
             Assert.Equal("a", ds.Declaration.Variables[0].Identifier.ToString());
             Assert.NotNull(ds.Declaration.Variables[0].Initializer);
-            Assert.Equal(ds.Declaration.Variables[0].Initializer.Kind, SyntaxKind.EqualsValueClause);
+            Assert.Equal(SyntaxKind.EqualsValueClause, ds.Declaration.Variables[0].Initializer.Kind);
             var initializer = (EqualsValueClauseSyntax)ds.Declaration.Variables[0].Initializer;
             Assert.NotNull(initializer.EqualsToken);
             Assert.False(initializer.EqualsToken.IsMissing);
@@ -270,7 +271,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.EmptyStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var es = (EmptyStatementSyntax)statement;
             Assert.NotNull(es.SemicolonToken);
@@ -286,7 +287,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.BreakStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var b = (BreakStatementSyntax)statement;
             Assert.NotNull(b.BreakKeyword);
@@ -305,7 +306,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ContinueStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var cs = (ContinueStatementSyntax)statement;
             Assert.NotNull(cs.ContinueKeyword);
@@ -324,7 +325,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.DiscardStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var cs = (DiscardStatementSyntax)statement;
             Assert.NotNull(cs.DiscardKeyword);
@@ -343,7 +344,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ReturnStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var rs = (ReturnStatementSyntax)statement;
             Assert.NotNull(rs.ReturnKeyword);
@@ -363,7 +364,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ReturnStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var rs = (ReturnStatementSyntax)statement;
             Assert.NotNull(rs.ReturnKeyword);
@@ -384,7 +385,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.WhileStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ws = (WhileStatementSyntax)statement;
             Assert.NotNull(ws.WhileKeyword);
@@ -406,7 +407,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.DoStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ds = (DoStatementSyntax)statement;
             Assert.NotNull(ds.DoKeyword);
@@ -431,7 +432,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -457,7 +458,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -468,7 +469,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(fs.Declaration);
             Assert.NotNull(fs.Declaration.Type);
             Assert.Equal("T", fs.Declaration.Type.ToString());
-            Assert.Equal(1, fs.Declaration.Variables.Count);
+            Assert.Single(fs.Declaration.Variables);
             Assert.NotNull(fs.Declaration.Variables[0].Identifier);
             Assert.Equal("a", fs.Declaration.Variables[0].Identifier.ToString());
             Assert.NotNull(fs.Declaration.Variables[0].Initializer);
@@ -495,7 +496,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -542,7 +543,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -572,7 +573,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -607,7 +608,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -637,7 +638,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -668,7 +669,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -703,7 +704,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var fs = (ForStatementSyntax)statement;
             Assert.NotNull(fs.ForKeyword);
@@ -714,7 +715,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(fs.Declaration);
             Assert.NotNull(fs.Declaration.Type);
             Assert.Equal("T", fs.Declaration.Type.ToString());
-            Assert.Equal(1, fs.Declaration.Variables.Count);
+            Assert.Single(fs.Declaration.Variables);
             Assert.NotNull(fs.Declaration.Variables[0].Identifier);
             Assert.Equal("a", fs.Declaration.Variables[0].Identifier.ToString());
             Assert.NotNull(fs.Declaration.Variables[0].Initializer);
@@ -748,7 +749,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.IfStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (IfStatementSyntax)statement;
             Assert.NotNull(ss.IfKeyword);
@@ -771,7 +772,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.IfStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (IfStatementSyntax)statement;
             Assert.NotNull(ss.IfKeyword);
@@ -797,7 +798,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -807,7 +808,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.Equal("a", ss.Expression.ToString());
             Assert.NotNull(ss.CloseParenToken);
             Assert.NotNull(ss.OpenBraceToken);
-            Assert.Equal(0, ss.Sections.Count);
+            Assert.Empty(ss.Sections);
             Assert.NotNull(ss.CloseBraceToken);
         }
 
@@ -820,7 +821,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -831,8 +832,8 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(ss.CloseParenToken);
             Assert.NotNull(ss.OpenBraceToken);
 
-            Assert.Equal(1, ss.Sections.Count);
-            Assert.Equal(1, ss.Sections[0].Labels.Count);
+            Assert.Single(ss.Sections);
+            Assert.Single(ss.Sections[0].Labels);
             Assert.NotNull(ss.Sections[0].Labels[0].Keyword);
             Assert.Equal(SyntaxKind.CaseKeyword, ss.Sections[0].Labels[0].Keyword.Kind);
             var caseLabelSyntax = ss.Sections[0].Labels[0] as CaseSwitchLabelSyntax;
@@ -840,7 +841,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(caseLabelSyntax.Value);
             Assert.Equal("b", caseLabelSyntax.Value.ToString());
             Assert.NotNull(caseLabelSyntax.ColonToken);
-            Assert.Equal(1, ss.Sections[0].Statements.Count);
+            Assert.Single(ss.Sections[0].Statements);
             Assert.Equal(";", ss.Sections[0].Statements[0].ToString());
 
             Assert.NotNull(ss.CloseBraceToken);
@@ -855,7 +856,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -868,7 +869,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
 
             Assert.Equal(2, ss.Sections.Count);
 
-            Assert.Equal(1, ss.Sections[0].Labels.Count);
+            Assert.Single(ss.Sections[0].Labels);
             Assert.NotNull(ss.Sections[0].Labels[0].Keyword);
             Assert.Equal(SyntaxKind.CaseKeyword, ss.Sections[0].Labels[0].Keyword.Kind);
             var caseLabelSyntax = ss.Sections[0].Labels[0] as CaseSwitchLabelSyntax;
@@ -876,10 +877,10 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(caseLabelSyntax.Value);
             Assert.Equal("b", caseLabelSyntax.Value.ToString());
             Assert.NotNull(caseLabelSyntax.ColonToken);
-            Assert.Equal(1, ss.Sections[0].Statements.Count);
+            Assert.Single(ss.Sections[0].Statements);
             Assert.Equal(";", ss.Sections[0].Statements[0].ToString());
 
-            Assert.Equal(1, ss.Sections[1].Labels.Count);
+            Assert.Single(ss.Sections[1].Labels);
             Assert.NotNull(ss.Sections[1].Labels[0].Keyword);
             Assert.Equal(SyntaxKind.CaseKeyword, ss.Sections[1].Labels[0].Keyword.Kind);
             var caseLabelSyntax2 = ss.Sections[1].Labels[0] as CaseSwitchLabelSyntax;
@@ -887,7 +888,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(caseLabelSyntax2.Value);
             Assert.Equal("c", caseLabelSyntax2.Value.ToString());
             Assert.NotNull(caseLabelSyntax2.ColonToken);
-            Assert.Equal(1, ss.Sections[1].Statements.Count);
+            Assert.Single(ss.Sections[1].Statements);
             Assert.Equal(";", ss.Sections[0].Statements[0].ToString());
 
             Assert.NotNull(ss.CloseBraceToken);
@@ -902,7 +903,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -913,14 +914,14 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(ss.CloseParenToken);
             Assert.NotNull(ss.OpenBraceToken);
 
-            Assert.Equal(1, ss.Sections.Count);
+            Assert.Single(ss.Sections);
 
-            Assert.Equal(1, ss.Sections[0].Labels.Count);
+            Assert.Single(ss.Sections[0].Labels);
             Assert.NotNull(ss.Sections[0].Labels[0].Keyword);
             Assert.Equal(SyntaxKind.DefaultKeyword, ss.Sections[0].Labels[0].Keyword.Kind);
             Assert.Equal(SyntaxKind.DefaultSwitchLabel, ss.Sections[0].Labels[0].Kind);
             Assert.NotNull(ss.Sections[0].Labels[0].ColonToken);
-            Assert.Equal(1, ss.Sections[0].Statements.Count);
+            Assert.Single(ss.Sections[0].Statements);
             Assert.Equal(";", ss.Sections[0].Statements[0].ToString());
 
             Assert.NotNull(ss.CloseBraceToken);
@@ -935,7 +936,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -946,7 +947,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(ss.CloseParenToken);
             Assert.NotNull(ss.OpenBraceToken);
 
-            Assert.Equal(1, ss.Sections.Count);
+            Assert.Single(ss.Sections);
 
             Assert.Equal(2, ss.Sections[0].Labels.Count);
             Assert.NotNull(ss.Sections[0].Labels[0].Keyword);
@@ -962,7 +963,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(caseLabelSyntax2.Value);
             Assert.Equal("c", caseLabelSyntax2.Value.ToString());
             Assert.NotNull(ss.Sections[0].Labels[0].ColonToken);
-            Assert.Equal(1, ss.Sections[0].Statements.Count);
+            Assert.Single(ss.Sections[0].Statements);
             Assert.Equal(";", ss.Sections[0].Statements[0].ToString());
 
             Assert.NotNull(ss.CloseBraceToken);
@@ -977,7 +978,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.SwitchStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var ss = (SwitchStatementSyntax)statement;
             Assert.NotNull(ss.SwitchKeyword);
@@ -988,9 +989,9 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(ss.CloseParenToken);
             Assert.NotNull(ss.OpenBraceToken);
 
-            Assert.Equal(1, ss.Sections.Count);
+            Assert.Single(ss.Sections);
 
-            Assert.Equal(1, ss.Sections[0].Labels.Count);
+            Assert.Single(ss.Sections[0].Labels);
             Assert.NotNull(ss.Sections[0].Labels[0].Keyword);
             Assert.Equal(SyntaxKind.CaseKeyword, ss.Sections[0].Labels[0].Keyword.Kind);
             var caseLabelSyntax = ss.Sections[0].Labels[0] as CaseSwitchLabelSyntax;
@@ -1013,10 +1014,10 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.Block, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var block = (BlockSyntax) statement;
-            Assert.Equal(1, block.Statements.Count);
+            Assert.Single(block.Statements);
             var innerStatement = block.Statements[0];
             Assert.NotNull(innerStatement);
             Assert.Equal(SyntaxKind.ExpressionStatement, innerStatement.Kind);
@@ -1038,7 +1039,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.TypeDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var typeDeclarationStatement = (TypeDeclarationStatementSyntax) statement;
             Assert.Equal(SyntaxKind.ClassType, typeDeclarationStatement.Type.Kind);
@@ -1049,7 +1050,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.Equal(SyntaxKind.ClassKeyword, cd.StructKeyword.Kind);
             Assert.Null(cd.BaseList);
             Assert.NotNull(cd.OpenBraceToken);
-            Assert.Equal(1, cd.Members.Count);
+            Assert.Single(cd.Members);
             Assert.Equal("int a;", cd.Members[0].ToString());
             Assert.NotNull(cd.CloseBraceToken);
 
@@ -1065,7 +1066,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.TypeDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var typeDeclarationStatement = (TypeDeclarationStatementSyntax)statement;
             Assert.Equal(SyntaxKind.ClassType, typeDeclarationStatement.Type.Kind);
@@ -1078,7 +1079,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(cd.BaseList.ColonToken);
             Assert.Equal("B", cd.BaseList.BaseType.ToString());
             Assert.NotNull(cd.OpenBraceToken);
-            Assert.Equal(1, cd.Members.Count);
+            Assert.Single(cd.Members);
             Assert.Equal("int a;", cd.Members[0].ToString());
             Assert.NotNull(cd.CloseBraceToken);
 
@@ -1094,7 +1095,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.TypeDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var typeDeclarationStatement = (TypeDeclarationStatementSyntax)statement;
             Assert.Equal(SyntaxKind.InterfaceType, typeDeclarationStatement.Type.Kind);
@@ -1104,7 +1105,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.Equal("I", cd.Name.Text);
             Assert.Equal(SyntaxKind.InterfaceKeyword, cd.InterfaceKeyword.Kind);
             Assert.NotNull(cd.OpenBraceToken);
-            Assert.Equal(1, cd.Methods.Count);
+            Assert.Single(cd.Methods);
             Assert.Equal("int foo();", cd.Methods[0].ToString());
             Assert.NotNull(cd.CloseBraceToken);
 
@@ -1120,7 +1121,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.TypeDeclarationStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var typeDeclarationStatement = (TypeDeclarationStatementSyntax)statement;
             Assert.Equal(SyntaxKind.StructType, typeDeclarationStatement.Type.Kind);
@@ -1130,7 +1131,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.Equal("S", cd.Name.Text);
             Assert.Equal(SyntaxKind.StructKeyword, cd.StructKeyword.Kind);
             Assert.NotNull(cd.OpenBraceToken);
-            Assert.Equal(1, cd.Members.Count);
+            Assert.Single(cd.Members);
             Assert.Equal("int a;", cd.Members[0].ToString());
             Assert.NotNull(cd.CloseBraceToken);
 
@@ -1146,7 +1147,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.TypedefStatement, statement.Kind);
             Assert.Equal(text, statement.ToString());
-            Assert.Equal(0, statement.GetDiagnostics().Count());
+            Assert.Empty(statement.GetDiagnostics());
 
             var typedefStatement = (TypedefStatementSyntax) statement;
             Assert.Equal(SyntaxKind.PredefinedVectorType, typedefStatement.Type.Kind);

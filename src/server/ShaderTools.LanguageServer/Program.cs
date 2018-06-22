@@ -23,7 +23,6 @@ namespace ShaderTools.LanguageServer
 
             if (launchDebugger)
             {
-                // TODO: Doesn't work on .NET Core yet: https://github.com/dotnet/coreclr/issues/12074
                 Debugger.Launch();
             }
 

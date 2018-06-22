@@ -28,7 +28,7 @@ namespace ShaderTools.CodeAnalysis.ShaderLab.Tests.Parser
                 foreach (var diagnostic in token.GetDiagnostics())
                     Debug.WriteLine($"{diagnostic} at {diagnostic.SourceRange}");
 
-            Assert.False(tokens.Any(t => t.ContainsDiagnostics));
+            Assert.DoesNotContain(tokens, t => t.ContainsDiagnostics);
         }
 
         [Fact]

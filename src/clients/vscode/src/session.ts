@@ -24,7 +24,7 @@ export class SessionManager {
     private registeredCommands: vscode.Disposable[] = [];
     private languageServerClient: LanguageClient = undefined;
 
-    constructor(private log: vscode.Logger) {
+    constructor() {
         this.registerCommands();
     }
 
@@ -34,9 +34,6 @@ export class SessionManager {
     }
 
     public stop() {
-        // Shut down existing session if there is one
-        this.log.info("Shutting down language client...");
-
         if (this.sessionStatus === SessionStatus.Failed) {
             // Before moving further, clear out the client and process if
             // the process is already dead (i.e. it crashed)
@@ -76,49 +73,43 @@ export class SessionManager {
                 "Starting Shader Tools...",
                 SessionStatus.Initializing);
 
-            this.log.logDirectory.then(x => {
-                var editorServicesLogPath = path.join(x, "LanguageServer.log");
+            var serverExe = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp2.1/ShaderTools.LanguageServer.dll');
 
-                var serverExe = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp2.0/ShaderTools.LanguageServer.dll');
+            var startArgs = [ serverExe ];
+            //startArgs.push("--logfilepath", editorServicesLogPath);
 
-                var startArgs = [ serverExe ];
-                startArgs.push("--logfilepath", editorServicesLogPath);
+            var debugArgs = startArgs.slice(0);
+            debugArgs.push("--launchdebugger");
 
-                var debugArgs = startArgs.slice(0);
-                debugArgs.push("--launchdebugger");
+            let serverOptions: ServerOptions = {
+                run: { command: 'dotnet', args: startArgs },
+                debug: {command: 'dotnet', args: debugArgs }
+            };
 
-                this.log.info("Language server starting...");
-
-                let serverOptions: ServerOptions = {
-                    run: { command: 'dotnet', args: startArgs },
-                    debug: {command: 'dotnet', args: debugArgs }
-                };
-
-                let clientOptions: LanguageClientOptions = {
-                    documentSelector: LanguageIds,
-                    synchronize: {
-                        configurationSection: LanguageIds
-                    }
+            let clientOptions: LanguageClientOptions = {
+                documentSelector: LanguageIds,
+                synchronize: {
+                    configurationSection: LanguageIds
                 }
+            }
 
-                this.languageServerClient =
-                    new LanguageClient(
-                        'Shader Tools Language Client',
-                        serverOptions,
-                        clientOptions);
+            this.languageServerClient =
+                new LanguageClient(
+                    'Shader Tools Language Client',
+                    serverOptions,
+                    clientOptions);
 
-                this.languageServerClient.onReady().then(
-                    () => {
-                        this.setSessionStatus(
-                            'Shader Tools',
-                            SessionStatus.Running);
-                    },
-                    (reason) => {
-                        this.setSessionFailure("Could not start language service: ", reason);
-                    });
+            this.languageServerClient.onReady().then(
+                () => {
+                    this.setSessionStatus(
+                        'Shader Tools',
+                        SessionStatus.Running);
+                },
+                (reason) => {
+                    this.setSessionFailure("Could not start language service: ", reason);
+                });
 
-                this.languageServerClient.start();
-            });
+            this.languageServerClient.start();
         }
         catch (e)
         {
@@ -173,8 +164,6 @@ export class SessionManager {
     }
 
     private setSessionFailure(message: string, ...additionalMessages: string[]) {
-        this.log.error(message, ...additionalMessages);
-
         this.setSessionStatus(
             "Shader Tools Initialization Error",
             SessionStatus.Failed);

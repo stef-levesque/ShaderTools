@@ -9,6 +9,7 @@ using CompletionList = OmniSharp.Extensions.LanguageServer.Protocol.Models.Compl
 using CompletionItem = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionItem;
 using ShaderTools.CodeAnalysis.Shared.Extensions;
 using ShaderTools.CodeAnalysis;
+using System;
 
 namespace ShaderTools.LanguageServer.Handlers
 {
@@ -33,7 +34,7 @@ namespace ShaderTools.LanguageServer.Handlers
             };
         }
 
-        public async Task<CompletionList> Handle(TextDocumentPositionParams request, CancellationToken token)
+        public async Task<CompletionList> Handle(CompletionParams request, CancellationToken token)
         {
             var (document, position) = _workspace.GetLogicalDocument(request);
 
@@ -65,7 +66,7 @@ namespace ShaderTools.LanguageServer.Handlers
                 Label = item.DisplayText,
                 SortText = item.SortText,
                 FilterText = item.FilterText,
-                Kind = CompletionItemKind.Class,
+                Kind = GetKind(item.Glyph),
                 TextEdit = new TextEdit
                 {
                     NewText = item.DisplayText,
@@ -74,6 +75,55 @@ namespace ShaderTools.LanguageServer.Handlers
                 Documentation = documentation,
                 CommitCharacters = completionRules.DefaultCommitCharacters.Select(x => x.ToString()).ToArray()
             };
+        }
+
+        private static CompletionItemKind GetKind(Glyph glyph)
+        {
+            switch (glyph)
+            {
+                case Glyph.None:
+                    return CompletionItemKind.Class;
+                case Glyph.Class:
+                    return CompletionItemKind.Class;
+                case Glyph.Constant:
+                    return CompletionItemKind.Constant;
+                case Glyph.Field:
+                    return CompletionItemKind.Field;
+                case Glyph.Interface:
+                    return CompletionItemKind.Interface;
+                case Glyph.Intrinsic:
+                    return CompletionItemKind.Function;
+                case Glyph.Keyword:
+                    return CompletionItemKind.Keyword;
+                case Glyph.Label:
+                    return CompletionItemKind.Keyword;
+                case Glyph.Local:
+                    return CompletionItemKind.Variable;
+                case Glyph.Macro:
+                    return CompletionItemKind.Reference;
+                case Glyph.Namespace:
+                    return CompletionItemKind.Module;
+                case Glyph.Method:
+                    return CompletionItemKind.Method;
+                case Glyph.Module:
+                    return CompletionItemKind.Module;
+                case Glyph.OpenFolder:
+                    return CompletionItemKind.Folder;
+                case Glyph.Operator:
+                    return CompletionItemKind.Operator;
+                case Glyph.Parameter:
+                    return CompletionItemKind.Variable;
+                case Glyph.Structure:
+                    return CompletionItemKind.Struct;
+                case Glyph.Typedef:
+                    return CompletionItemKind.Variable;
+                case Glyph.TypeParameter:
+                    return CompletionItemKind.TypeParameter;
+                case Glyph.CompletionWarning:
+                    return CompletionItemKind.Snippet;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(glyph));
+            }
         }
     }
 }

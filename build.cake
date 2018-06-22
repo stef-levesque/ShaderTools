@@ -189,7 +189,7 @@ Task("Build")
     .IsDependentOn("Version")
     .IsDependentOn("Server")
     .IsDependentOn("Client-VS-Windows-Build")
-    .IsDependentOn("Client-VS-Mac-Build")
+    //.IsDependentOn("Client-VS-Mac-Build")
     .IsDependentOn("Client-VSCode-Build");
 
 Task("Test")

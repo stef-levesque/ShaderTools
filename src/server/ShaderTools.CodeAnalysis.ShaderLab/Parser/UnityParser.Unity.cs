@@ -571,7 +571,7 @@ namespace ShaderTools.CodeAnalysis.ShaderLab.Parser
 
         private ShaderIncludeSyntax ParseUnityShaderInclude()
         {
-            var cgIncludeKeyword = MatchOneOf(SyntaxKind.CgIncludeKeyword, SyntaxKind.HlslInclude);
+            var cgIncludeKeyword = MatchOneOf(SyntaxKind.CgIncludeKeyword, SyntaxKind.HlslIncludeKeyword);
 
             var programKind = cgIncludeKeyword.Kind == SyntaxKind.CgIncludeKeyword
                 ? SyntaxKind.CgInclude

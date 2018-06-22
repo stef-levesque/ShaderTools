@@ -3,10 +3,8 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using Serilog;
 using ShaderTools.CodeAnalysis;
@@ -22,6 +20,7 @@ namespace ShaderTools.LanguageServer
 
         private readonly MefHostServices _exportProvider;
         private LanguageServerWorkspace _workspace;
+        private DiagnosticNotifier _diagnosticNotifier;
 
         private readonly LoggerFactory _loggerFactory;
         private readonly Serilog.Core.Logger _logger;
@@ -62,29 +61,7 @@ namespace ShaderTools.LanguageServer
             _workspace = new LanguageServerWorkspace(_exportProvider, request.RootPath);
 
             var diagnosticService = _workspace.Services.GetService<IDiagnosticService>();
-            diagnosticService.DiagnosticsUpdated += (sender, e) =>
-            {
-                // TODO: Make sure this runs in-order.
-                Task.Run(async () =>
-                {
-                    var document = _workspace.CurrentDocuments.GetDocument(e.Document.Id);
-
-                    var diagnostics = document != null
-                        ? await diagnosticService.GetDiagnosticsAsync(e.Document.Id, CancellationToken.None)
-                        : ImmutableArray<MappedDiagnostic>.Empty;
-
-                    var diagnosticsGroupedByFile = diagnostics.GroupBy(x => x.FileSpan.File);
-
-                    foreach (var fileDiagnostics in diagnosticsGroupedByFile)
-                    {
-                        _server.PublishDiagnostics(new PublishDiagnosticsParams
-                        {
-                            Uri = Helpers.ToUri(fileDiagnostics.Key.FilePath),
-                            Diagnostics = fileDiagnostics.Select(x => Helpers.ToDiagnostic(x)).ToArray()
-                        });
-                    }
-                });
-            };
+            _diagnosticNotifier = new DiagnosticNotifier(_server, diagnosticService);
 
             var documentSelector = new DocumentSelector(
                 LanguageNames.AllLanguages
@@ -102,11 +79,11 @@ namespace ShaderTools.LanguageServer
 
             _server.AddHandler(new CompletionHandler(_workspace, registrationOptions));
             _server.AddHandler(new DefinitionHandler(_workspace, registrationOptions));
+            _server.AddHandler(new WorkspaceSymbolsHandler(_workspace));
             _server.AddHandler(new DocumentHighlightHandler(_workspace, registrationOptions));
-            //_server.AddHandler(new WorkspaceSymbolsHandler(_workspace, registrationOptions)); // TODO: Need fix for https://github.com/OmniSharp/csharp-language-server-protocol/issues/80
+            _server.AddHandler(new DocumentSymbolsHandler(_workspace, registrationOptions));
             _server.AddHandler(new HoverHandler(_workspace, registrationOptions));
             _server.AddHandler(new SignatureHelpHandler(_workspace, registrationOptions));
-            //_server.AddHandler(new WorkspaceSymbolsHandler(_workspace, registrationOptions));
 
             return Task.CompletedTask;
         }
@@ -117,6 +94,8 @@ namespace ShaderTools.LanguageServer
 
         public void Dispose()
         {
+            _diagnosticNotifier?.Dispose();
+
             _server.Dispose();
 
             _logger.Dispose();

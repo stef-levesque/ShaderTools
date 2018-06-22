@@ -61,8 +61,18 @@ namespace ShaderTools.CodeAnalysis.ShaderLab.Parser
             _leadingTrivia.Clear();
             _start = _charReader.Position;
 
-            if (_kind == SyntaxKind.CgProgramKeyword || _kind == SyntaxKind.CgIncludeKeyword)
-                ReadCgTrivia(_leadingTrivia);
+            switch (_kind)
+            {
+                case SyntaxKind.CgProgramKeyword:
+                case SyntaxKind.CgIncludeKeyword:
+                    ReadCgTrivia(_leadingTrivia, "ENDCG", SyntaxKind.CgProgramTrivia);
+                    break;
+
+                case SyntaxKind.HlslProgramKeyword:
+                case SyntaxKind.HlslIncludeKeyword:
+                    ReadCgTrivia(_leadingTrivia, "ENDHLSL", SyntaxKind.HlslProgramTrivia);
+                    break;
+            }
 
             ReadTrivia(_leadingTrivia, isTrailing: false);
             var leadingTrivia = _leadingTrivia.ToImmutableArray();
@@ -103,21 +113,26 @@ namespace ShaderTools.CodeAnalysis.ShaderLab.Parser
             return width;
         }
 
-        private void ReadCgTrivia(List<PretokenizedSyntaxTrivia> target)
+        private void ReadCgTrivia(List<PretokenizedSyntaxTrivia> target, string endText, SyntaxKind triviaKind)
         {
             while (_charReader.Current != '\0')
             {
-                if (_charReader.Peek(0) == 'E'
-                    && _charReader.Peek(1) == 'N'
-                    && _charReader.Peek(2) == 'D'
-                    && _charReader.Peek(3) == 'C'
-                    && _charReader.Peek(4) == 'G')
+                var shouldBreak = true;
+                for (var i = 0; i < endText.Length; i++)
+                {
+                    if (_charReader.Peek(i) != endText[i])
+                    {
+                        shouldBreak = false;
+                        break;
+                    }
+                }
+                if (shouldBreak)
                 {
                     break;
                 }
                 NextChar();
             }
-            AddTrivia(target, SyntaxKind.CgProgramTrivia);
+            AddTrivia(target, triviaKind);
         }
 
         private ImmutableArray<PretokenizedDiagnostic> GetErrors(int leadingTriviaWidth)

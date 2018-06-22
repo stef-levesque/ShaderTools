@@ -40,7 +40,7 @@ namespace ShaderTools.VisualStudio.LanguageClients
                 vsixDirectory,
                 "Server",
                 "ShaderTools.LanguageServer.exe");
-            var languageServerArguments = $@"--logfilepath ""{vsixDirectory}/LanguageServerLog.txt""";
+            var languageServerArguments = "--launchdebugger";// $@"--logfilepath ""{vsixDirectory}/LanguageServerLog.txt""";
 
             string fileName, arguments;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)

@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.LanguageServer"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShaderTools.Testing", "ShaderTools.Testing\ShaderTools.Testing.csproj", "{71E5E793-D56C-4792-B301-14B18D12859A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShaderTools.LanguageServer.Tests", "ShaderTools.LanguageServer.Tests\ShaderTools.LanguageServer.Tests.csproj", "{59772BF6-7396-4BB8-964E-E4642D73F8FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShaderTools.CodeAnalysis.ShaderLab.Features.Tests", "ShaderTools.CodeAnalysis.ShaderLab.Features.Tests\ShaderTools.CodeAnalysis.ShaderLab.Features.Tests.csproj", "{C2D34173-EEA6-4248-9D2B-B43564D898EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +109,14 @@ Global
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71E5E793-D56C-4792-B301-14B18D12859A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59772BF6-7396-4BB8-964E-E4642D73F8FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59772BF6-7396-4BB8-964E-E4642D73F8FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59772BF6-7396-4BB8-964E-E4642D73F8FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59772BF6-7396-4BB8-964E-E4642D73F8FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2D34173-EEA6-4248-9D2B-B43564D898EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2D34173-EEA6-4248-9D2B-B43564D898EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2D34173-EEA6-4248-9D2B-B43564D898EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2D34173-EEA6-4248-9D2B-B43564D898EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
