@@ -33,7 +33,7 @@
     "@types/node": "^6.0.40",
     "typescript": "^2.7.2",
     "vsce": "^1.37.5",
-    "vscode": "^1.1.13"
+    "vscode": "^1.1.21"
   },
   "extensionDependencies": [
     "vscode.hlsl",
