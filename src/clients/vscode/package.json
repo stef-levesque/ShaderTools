@@ -5,12 +5,12 @@
   "publisher": "TimGJones",
   "description": "Rich HLSL language support for Visual Studio Code",
   "engines": {
-    "vscode": "^1.21.0"
+    "vscode": "^1.28.1"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://github.com/ShaderTools/ShaderTools/tree/master/src/clients/vscode/README.md",
   "categories": [
-    "Languages"
+    "Programming Languages"
   ],
   "icon": "art/logo.png",
   "galleryBanner": {
