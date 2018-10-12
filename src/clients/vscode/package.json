@@ -27,7 +27,7 @@
     "onLanguage:shaderlab"
   ],
   "dependencies": {
-    "vscode-languageclient": "4.0.0"
+    "vscode-languageclient": "5.1.0"
   },
   "devDependencies": {
     "@types/node": "^6.0.40",
