@@ -16,6 +16,14 @@ enum SessionStatus {
     Failed
 }
 
+class ConsoleLogger {
+    error(message: string, ...args: any[]): void { console.error(arguments); }
+    info(message: string, ...args: any[]): void { console.info(arguments); }
+    log(message: string, ...args: any[]): void { console.log(arguments); }
+    trace(message: string, ...args: any[]): void { console.trace(arguments); }
+    warn(message: string, ...args: any[]): void { console.warn(arguments); }
+};
+
 export class SessionManager {
     private ShowSessionMenuCommandName = "ShaderTools.ShowSessionMenu";
 
@@ -24,7 +32,10 @@ export class SessionManager {
     private registeredCommands: vscode.Disposable[] = [];
     private languageServerClient: LanguageClient = undefined;
 
-    constructor(private log: vscode.Logger) {
+    private log: ConsoleLogger = undefined;
+
+    constructor(private context: vscode.ExtensionContext) {
+        this.log = new ConsoleLogger();
         this.registerCommands();
     }
 
@@ -76,49 +87,48 @@ export class SessionManager {
                 "Starting Shader Tools...",
                 SessionStatus.Initializing);
 
-            this.log.logDirectory.then(x => {
-                var editorServicesLogPath = path.join(x, "LanguageServer.log");
+            var editorServicesLogPath = path.join(this.context.logPath, "LanguageServer.log");
 
-                var serverExe = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp2.0/ShaderTools.LanguageServer.dll');
+            var serverExe = path.resolve(__dirname, '../../../server/ShaderTools.LanguageServer/bin/Debug/netcoreapp2.0/ShaderTools.LanguageServer.dll');
 
-                var startArgs = [ serverExe ];
-                startArgs.push("--logfilepath", editorServicesLogPath);
+            var startArgs = [ serverExe ];
+            startArgs.push("--logfilepath", editorServicesLogPath);
 
-                var debugArgs = startArgs.slice(0);
-                debugArgs.push("--launchdebugger");
+            var debugArgs = startArgs.slice(0);
+            debugArgs.push("--launchdebugger");
 
-                this.log.info("Language server starting...");
+            this.log.info("Language server starting...");
 
-                let serverOptions: ServerOptions = {
-                    run: { command: 'dotnet', args: startArgs },
-                    debug: {command: 'dotnet', args: debugArgs }
-                };
+            let serverOptions: ServerOptions = {
+                run: { command: 'dotnet', args: startArgs },
+                debug: {command: 'dotnet', args: debugArgs }
+            };
 
-                let clientOptions: LanguageClientOptions = {
-                    documentSelector: LanguageIds,
-                    synchronize: {
-                        configurationSection: LanguageIds
-                    }
+            let clientOptions: LanguageClientOptions = {
+                documentSelector: LanguageIds,
+                synchronize: {
+                    configurationSection: LanguageIds
                 }
+            }
 
-                this.languageServerClient =
-                    new LanguageClient(
-                        'Shader Tools Language Client',
-                        serverOptions,
-                        clientOptions);
+            this.languageServerClient =
+                new LanguageClient(
+                    'Shader Tools Language Client',
+                    serverOptions,
+                    clientOptions);
 
-                this.languageServerClient.onReady().then(
-                    () => {
-                        this.setSessionStatus(
-                            'Shader Tools',
-                            SessionStatus.Running);
-                    },
-                    (reason) => {
-                        this.setSessionFailure("Could not start language service: ", reason);
-                    });
+            this.languageServerClient.onReady().then(
+                () => {
+                    this.setSessionStatus(
+                        'Shader Tools',
+                        SessionStatus.Running);
+                },
+                (reason) => {
+                    this.setSessionFailure("Could not start language service: ", reason);
+                });
 
-                this.languageServerClient.start();
-            });
+            this.languageServerClient.start();
+
         }
         catch (e)
         {

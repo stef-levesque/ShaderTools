@@ -10,14 +10,12 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand(
             "ShaderTools.OpenLogFolder",
             () => {
-                context.logger.logDirectory.then(x => {
-                    vscode.commands.executeCommand(
-                        "vscode.openFolder",
-                        vscode.Uri.file(x),
-                        true);
-                });
+                vscode.commands.executeCommand(
+                    "vscode.openFolder",
+                    vscode.Uri.file(context.logPath),
+                    true);
             }));
 
-    context.subscriptions.push(sessionManager = new SessionManager(context.logger));
+    context.subscriptions.push(sessionManager = new SessionManager(context));
     sessionManager.start();
 }
