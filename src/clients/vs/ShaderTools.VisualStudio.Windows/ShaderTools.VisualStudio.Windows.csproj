@@ -76,6 +76,9 @@
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client">
       <Version>1.1.6-pre</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers">
+      <Version>15.8.36</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0">
       <Version>15.0.26201</Version>
     </PackageReference>
