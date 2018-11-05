@@ -31,13 +31,11 @@ namespace ShaderTools.LanguageServer
             LanguageServerHost languageServerHost = null;
             try
             {
-                languageServerHost = new LanguageServerHost(
+                languageServerHost = await LanguageServerHost.Create(
                     Console.OpenStandardInput(),
                     Console.OpenStandardOutput(),
                     logFilePath,
                     logLevel);
-
-                await languageServerHost.Initialize();
             }
             catch (Exception ex)
             {

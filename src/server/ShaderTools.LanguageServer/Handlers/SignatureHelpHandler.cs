@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ShaderTools.LanguageServer.Services.SignatureHelp;
 
 namespace ShaderTools.LanguageServer.Handlers
@@ -27,7 +27,7 @@ namespace ShaderTools.LanguageServer.Handlers
             };
         }
 
-        public Task<SignatureHelp> Handle(TextDocumentPositionParams request, CancellationToken token)
+        public Task<SignatureHelp> Handle(SignatureHelpParams request, CancellationToken token)
         {
             var (document, position) = _workspace.GetLogicalDocument(request);
 

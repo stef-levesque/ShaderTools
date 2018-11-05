@@ -1,15 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-using ShaderTools.CodeAnalysis.Completion;
-using CompletionList = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionList;
-using CompletionItem = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionItem;
-using ShaderTools.CodeAnalysis.Shared.Extensions;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ShaderTools.CodeAnalysis;
-using System;
+using ShaderTools.CodeAnalysis.Completion;
+using ShaderTools.CodeAnalysis.Shared.Extensions;
+using CompletionItem = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionItem;
+using CompletionList = OmniSharp.Extensions.LanguageServer.Protocol.Models.CompletionList;
 
 namespace ShaderTools.LanguageServer.Handlers
 {

@@ -2,9 +2,9 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ShaderTools.CodeAnalysis;
 using ShaderTools.CodeAnalysis.ReferenceHighlighting;
 
@@ -23,7 +23,7 @@ namespace ShaderTools.LanguageServer.Handlers
 
         public TextDocumentRegistrationOptions GetRegistrationOptions() => _registrationOptions;
 
-        public async Task<DocumentHighlightContainer> Handle(TextDocumentPositionParams request, CancellationToken token)
+        public async Task<DocumentHighlightContainer> Handle(DocumentHighlightParams request, CancellationToken token)
         {
             var (document, position) = _workspace.GetLogicalDocument(request);
 

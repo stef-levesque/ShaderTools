@@ -4,8 +4,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ShaderTools.CodeAnalysis;
 using ShaderTools.CodeAnalysis.Diagnostics;
 using ShaderTools.Utilities;
@@ -15,13 +15,13 @@ namespace ShaderTools.LanguageServer
 {
     internal sealed class DiagnosticNotifier : IDisposable
     {
-        private readonly OmniSharp.Extensions.LanguageServer.Server.LanguageServer _server;
+        private readonly ILanguageServer _server;
         private readonly IDiagnosticService _diagnosticService;
         private readonly SimpleTaskQueue _queue;
 
         private readonly Dictionary<DocumentId, List<Uri>> _lastUris;
 
-        public DiagnosticNotifier(OmniSharp.Extensions.LanguageServer.Server.LanguageServer server, IDiagnosticService diagnosticService)
+        public DiagnosticNotifier(ILanguageServer server, IDiagnosticService diagnosticService)
         {
             _server = server;
             _diagnosticService = diagnosticService;
@@ -63,7 +63,7 @@ namespace ShaderTools.LanguageServer
                     diagnosticsForThisFile = Array.Empty<OmniSharp.Extensions.LanguageServer.Protocol.Models.Diagnostic>();
                 }
 
-                _server.PublishDiagnostics(new PublishDiagnosticsParams
+                _server.Document.PublishDiagnostics(new PublishDiagnosticsParams
                 {
                     Uri = diagnosticUri,
                     Diagnostics = diagnosticsForThisFile
