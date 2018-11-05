@@ -4,7 +4,7 @@
     <RootNamespace>ShaderTools.CodeAnalysis</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Composition" Version="1.0.31" />
+    <PackageReference Include="System.Composition" Version="1.2.0" />
     <ProjectReference Include="..\ShaderTools.CodeAnalysis\ShaderTools.CodeAnalysis.csproj" />
   </ItemGroup>
   <ItemGroup>
