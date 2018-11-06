@@ -77,11 +77,6 @@ namespace ShaderTools.LanguageServer
                 .WithOutput(output)
                 .WithLoggerFactory(_loggerFactory)
                 .OnInitialized(OnInitialized));
-        }
-
-        private Task OnInitialized(InitializeParams request, InitializeResult result)
-        {
-            _workspace = new LanguageServerWorkspace(_exportProvider, request.RootPath);
 
             var diagnosticService = _workspace.Services.GetService<IDiagnosticService>();
             _diagnosticNotifier = new DiagnosticNotifier(_server, diagnosticService);
@@ -107,6 +102,11 @@ namespace ShaderTools.LanguageServer
                 new DocumentSymbolsHandler(_workspace, registrationOptions),
                 new HoverHandler(_workspace, registrationOptions),
                 new SignatureHelpHandler(_workspace, registrationOptions));
+        }
+
+        private Task OnInitialized(InitializeParams request, InitializeResult result)
+        {
+            _workspace = new LanguageServerWorkspace(_exportProvider, request.RootPath);
 
             return Task.CompletedTask;
         }
