@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using ShaderTools.CodeAnalysis.GoToDefinition;
 using ShaderTools.CodeAnalysis.Shared.Extensions;
 
@@ -22,7 +22,7 @@ namespace ShaderTools.LanguageServer.Handlers
 
         public TextDocumentRegistrationOptions GetRegistrationOptions() => _registrationOptions;
 
-        public async Task<LocationOrLocations> Handle(TextDocumentPositionParams request, CancellationToken token)
+        public async Task<LocationOrLocations> Handle(DefinitionParams request, CancellationToken token)
         {
             var (document, position) = _workspace.GetLogicalDocument(request);
 

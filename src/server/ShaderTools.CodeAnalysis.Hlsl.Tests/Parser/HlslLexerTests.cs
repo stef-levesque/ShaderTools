@@ -25,7 +25,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.Equal(new SourceRange(new SourceLocation(0), 1), allTokens[0].SourceRange);
             Assert.Equal(new SourceRange(new SourceLocation(0), 2), allTokens[0].FullSourceRange);
             Assert.Empty(allTokens[0].LeadingTrivia);
-            Assert.Equal(1, allTokens[0].TrailingTrivia.Length);
+            Assert.Single(allTokens[0].TrailingTrivia);
             Assert.Equal(new SourceRange(new SourceLocation(1), 1), allTokens[0].TrailingTrivia[0].SourceRange);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, allTokens[0].TrailingTrivia[0].Kind);
             Assert.Equal(" ", ((SyntaxTrivia)allTokens[0].TrailingTrivia[0]).Text);
@@ -43,11 +43,11 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
 
             Assert.Equal(new SourceRange(new SourceLocation(6), 1), allTokens[2].SourceRange);
             Assert.Equal(new SourceRange(new SourceLocation(5), 4), allTokens[2].FullSourceRange);
-            Assert.Equal(1, allTokens[2].LeadingTrivia.Length);
+            Assert.Single(allTokens[2].LeadingTrivia);
             Assert.Equal(new SourceRange(new SourceLocation(5), 1), allTokens[2].LeadingTrivia[0].SourceRange);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, allTokens[2].LeadingTrivia[0].Kind);
             Assert.Equal(" ", ((SyntaxTrivia)allTokens[2].LeadingTrivia[0]).Text);
-            Assert.Equal(1, allTokens[2].TrailingTrivia.Length);
+            Assert.Single(allTokens[2].TrailingTrivia);
             Assert.Equal(new SourceRange(new SourceLocation(7), 2), allTokens[2].TrailingTrivia[0].SourceRange);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, allTokens[2].TrailingTrivia[0].Kind);
             Assert.Equal("  ", ((SyntaxTrivia)allTokens[2].TrailingTrivia[0]).Text);
@@ -75,7 +75,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(token);
             Assert.Equal(SyntaxKind.IntegerLiteralToken, token.Kind);
             var errors = token.GetDiagnostics().ToArray();
-            Assert.Equal(0, errors.Length);
+            Assert.Empty(errors);
             Assert.Equal(text, token.Text);
             Assert.Equal(value, token.Value);
         }
@@ -93,7 +93,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
             Assert.NotNull(token);
             Assert.Equal(SyntaxKind.FloatLiteralToken, token.Kind);
             var errors = token.GetDiagnostics().ToArray();
-            Assert.Equal(0, errors.Length);
+            Assert.Empty(errors);
             Assert.Equal(text, token.Text);
             Assert.Equal(value, token.Value);
         }
@@ -112,7 +112,7 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Tests.Parser
                 foreach (var diagnostic in token.GetDiagnostics())
                     Debug.WriteLine($"{diagnostic} at {diagnostic.SourceRange}");
 
-            Assert.False(tokens.Any(t => t.ContainsDiagnostics));
+            Assert.DoesNotContain(tokens, t => t.ContainsDiagnostics);
         }
 
         #region Test helpers

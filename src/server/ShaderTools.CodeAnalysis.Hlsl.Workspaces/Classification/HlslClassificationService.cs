@@ -17,27 +17,6 @@ namespace ShaderTools.CodeAnalysis.Hlsl.Classification
     [ExportLanguageService(typeof(IClassificationService), LanguageNames.Hlsl), Shared]
     internal class ShaderLabClassificationService : AbstractClassificationService
     {
-        //public override IEnumerable<ISyntaxClassifier> GetDefaultSyntaxClassifiers()
-        //{
-        //    return SyntaxClassifier.DefaultSyntaxClassifiers;
-        //}
-
-        //public override void AddLexicalClassifications(SourceText text, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
-        //{
-        //    ClassificationHelpers.AddLexicalClassifications(text, textSpan, result, cancellationToken);
-        //}
-
-        public override void AddSyntacticClassifications(SyntaxTreeBase syntaxTree, TextSpan textSpan, List<ClassifiedSpan> result, CancellationToken cancellationToken)
-        {
-            var worker = new SyntaxTaggerWorker(textSpan, result, cancellationToken);
-            worker.ClassifySyntax((SyntaxTree) syntaxTree);
-        }
-
-        //public override ClassifiedSpan FixClassification(SourceText rawText, ClassifiedSpan classifiedSpan)
-        //{
-        //    return ClassificationHelpers.AdjustStaleClassification(rawText, classifiedSpan);
-        //}
-
         public override void AddSemanticClassifications(SemanticModelBase semanticModel, TextSpan textSpan, Workspace workspace, List<ClassifiedSpan> result, CancellationToken cancellationToken)
         {
             var semanticTaggerVisitor = new SemanticTaggerVisitor((SemanticModel) semanticModel, result, cancellationToken);

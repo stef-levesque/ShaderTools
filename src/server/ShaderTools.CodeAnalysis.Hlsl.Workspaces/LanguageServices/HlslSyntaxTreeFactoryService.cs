@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Runtime.InteropServices;
+using System.Threading;
 using ShaderTools.CodeAnalysis.Hlsl.Syntax;
 using ShaderTools.CodeAnalysis.Hlsl.Text;
 using ShaderTools.CodeAnalysis.Host;
@@ -29,6 +30,15 @@ namespace ShaderTools.CodeAnalysis.Hlsl.LanguageServices
                 options.PreprocessorDefines.Add(kvp.Key, kvp.Value);
 
             options.AdditionalIncludeDirectories.AddRange(configFile.HlslAdditionalIncludeDirectories);
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                options.AdditionalIncludeDirectories.Add(@"C:\Program Files\Unity\Editor\Data\CGIncludes");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                options.AdditionalIncludeDirectories.Add(@"/Applications/Unity/Unity.app/Contents/CGIncludes");
+            }
 
             return SyntaxFactory.ParseSyntaxTree(
                 text,

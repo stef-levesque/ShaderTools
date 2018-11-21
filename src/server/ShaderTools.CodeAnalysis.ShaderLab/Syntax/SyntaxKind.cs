@@ -72,6 +72,7 @@
         MultiLineCommentTrivia,
         SkippedTokensTrivia,
         CgProgramTrivia,
+        HlslProgramTrivia,
 
         EndOfFileToken,
 

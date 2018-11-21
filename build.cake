@@ -1,7 +1,7 @@
 // Addins
 
-#addin "nuget:?package=Cake.Npm&version=0.10.0"
-#addin "nuget:?package=Cake.VsCode&version=0.8.0"
+#addin "nuget:?package=Cake.Npm&version=0.16.0"
+#addin "nuget:?package=Cake.VsCode&version=0.10.0"
 
 // Tools
 
@@ -189,7 +189,7 @@ Task("Build")
     .IsDependentOn("Version")
     .IsDependentOn("Server")
     .IsDependentOn("Client-VS-Windows-Build")
-    .IsDependentOn("Client-VS-Mac-Build")
+    //.IsDependentOn("Client-VS-Mac-Build")
     .IsDependentOn("Client-VSCode-Build");
 
 Task("Test")

@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using OmniSharp.Extensions.Embedded.MediatR;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 
 namespace ShaderTools.LanguageServer.Handlers
 {
-    internal sealed class TextDocumentSyncHandler : ITextDocumentSyncHandler
+    internal sealed class TextDocumentSyncHandler : ITextDocumentSyncHandler 
     {
         private readonly LanguageServerWorkspace _workspace;
         private readonly TextDocumentRegistrationOptions _registrationOptions;
 
-        public TextDocumentSyncOptions Options { get; } = new TextDocumentSyncOptions
-        {
-            Change = TextDocumentSyncKind.Incremental,
-            OpenClose = true,
-            WillSave = false,
-            WillSaveWaitUntil = false
-        };
+        public TextDocumentSyncKind Change { get; } = TextDocumentSyncKind.Incremental;
 
         public TextDocumentSyncHandler(LanguageServerWorkspace workspace, TextDocumentRegistrationOptions registrationOptions)
         {
@@ -38,13 +35,13 @@ namespace ShaderTools.LanguageServer.Handlers
             return new TextDocumentAttributes(uri, string.Empty);
         }
 
-        public Task Handle(DidChangeTextDocumentParams notification)
+        public Task<Unit> Handle(DidChangeTextDocumentParams notification, CancellationToken cancellationToken)
         {
             var document = _workspace.GetDocument(notification.TextDocument.Uri);
 
             if (document == null)
             {
-                return Task.CompletedTask;
+                return Unit.Task;
             }
 
             _workspace.UpdateDocument(
@@ -55,20 +52,20 @@ namespace ShaderTools.LanguageServer.Handlers
                         x.Range,
                         x.Text)));
 
-            return Task.CompletedTask;
+            return Unit.Task;
         }
 
-        public Task Handle(DidOpenTextDocumentParams notification)
+        public Task<Unit> Handle(DidOpenTextDocumentParams notification, CancellationToken cancellationToken)
         {
             _workspace.OpenDocument(
                 notification.TextDocument.Uri,
                 notification.TextDocument.Text,
                 notification.TextDocument.LanguageId);
 
-            return Task.CompletedTask;
+            return Unit.Task;
         }
 
-        public Task Handle(DidCloseTextDocumentParams notification)
+        public Task<Unit> Handle(DidCloseTextDocumentParams notification, CancellationToken cancellationToken)
         {
             var document = _workspace.GetDocument(notification.TextDocument.Uri);
 
@@ -77,10 +74,10 @@ namespace ShaderTools.LanguageServer.Handlers
                 _workspace.CloseDocument(document.Id);
             }
 
-            return Task.CompletedTask;
+            return Unit.Task;
         }
 
-        public Task Handle(DidSaveTextDocumentParams notification) => Task.CompletedTask;
+        public Task<Unit> Handle(DidSaveTextDocumentParams notification, CancellationToken cancellationToken) => Unit.Task;
 
         public void SetCapability(SynchronizationCapability capability) { }
 

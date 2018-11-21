@@ -161,7 +161,7 @@ int i = TABLESIZE;
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("i", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -192,7 +192,7 @@ float g = FOO(3, 4);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax) node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("f", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -230,7 +230,7 @@ float g = FOO(3, 4);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("i", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -269,7 +269,7 @@ float g = FOO(3, 4);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("i", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -321,7 +321,7 @@ PARAM(float, PASTE(bar, baz)) = 1.0f;
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("barbaz", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -351,7 +351,7 @@ FOO(Diffuse, texCoords.xy)
             var varDeclStatement1 = (VariableDeclarationStatementSyntax) node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedObjectType, varDeclStatement1.Declaration.Type.Kind);
             Assert.Equal("Texture2D", ((PredefinedObjectTypeSyntax) varDeclStatement1.Declaration.Type).ObjectTypeToken.Text);
-            Assert.Equal(1, varDeclStatement1.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement1.Declaration.Variables);
             Assert.Equal("g_DiffuseTexture", varDeclStatement1.Declaration.Variables[0].Identifier.Text);
             Assert.Null(varDeclStatement1.Declaration.Variables[0].Initializer);
 
@@ -359,7 +359,7 @@ FOO(Diffuse, texCoords.xy)
             var varDeclStatement2 = (VariableDeclarationStatementSyntax)node.ChildNodes[1];
             Assert.Equal(SyntaxKind.PredefinedObjectType, varDeclStatement2.Declaration.Type.Kind);
             Assert.Equal("SamplerState", ((PredefinedObjectTypeSyntax)varDeclStatement2.Declaration.Type).ObjectTypeToken.Text);
-            Assert.Equal(1, varDeclStatement2.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement2.Declaration.Variables);
             Assert.Equal("DiffuseSampler", varDeclStatement2.Declaration.Variables[0].Identifier.Text);
             Assert.Null(varDeclStatement2.Declaration.Variables[0].Initializer);
 
@@ -370,7 +370,7 @@ FOO(Diffuse, texCoords.xy)
             Assert.Equal(SyntaxKind.IdentifierDeclarationName, funcDefStatement.Name.Kind);
             Assert.Equal("GetTex", ((IdentifierDeclarationNameSyntax)funcDefStatement.Name).Name.Text);
 
-            Assert.Equal(1, funcDefStatement.Body.Statements.Count);
+            Assert.Single(funcDefStatement.Body.Statements);
             Assert.Equal(SyntaxKind.ReturnStatement, funcDefStatement.Body.Statements[0].Kind);
             var returnStatement = (ReturnStatementSyntax) funcDefStatement.Body.Statements[0];
             Assert.Equal(SyntaxKind.MethodInvocationExpression, returnStatement.Expression.Kind);
@@ -412,7 +412,7 @@ PARAM(float, PASTE(bar, FOO)) = 1.0f;
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("barFOO", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -442,7 +442,7 @@ float f = FOO(x, b);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("f", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -473,7 +473,7 @@ Texture2D MyTex < TEX_COMP_FULL(dxt5, true) >;
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedObjectType, varDeclStatement.Declaration.Type.Kind);
             Assert.Equal(SyntaxKind.Texture2DKeyword, ((PredefinedObjectTypeSyntax) varDeclStatement.Declaration.Type).ObjectTypeToken.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("MyTex", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.Equal(2, varDeclStatement.Declaration.Variables[0].Annotations.Annotations.Count);
 
@@ -483,7 +483,7 @@ Texture2D MyTex < TEX_COMP_FULL(dxt5, true) >;
             Assert.NotNull(annotation1.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, annotation1.Declaration.Variables[0].Initializer.Kind);
             Assert.Equal(SyntaxKind.StringLiteralExpression, ((EqualsValueClauseSyntax) annotation1.Declaration.Variables[0].Initializer).Value.Kind);
-            Assert.Equal(1, ((StringLiteralExpressionSyntax)((EqualsValueClauseSyntax)annotation1.Declaration.Variables[0].Initializer).Value).Tokens.Count);
+            Assert.Single(((StringLiteralExpressionSyntax)((EqualsValueClauseSyntax)annotation1.Declaration.Variables[0].Initializer).Value).Tokens);
             Assert.Equal("\"dxt5\"", ((StringLiteralExpressionSyntax) ((EqualsValueClauseSyntax)annotation1.Declaration.Variables[0].Initializer).Value).Tokens[0].Text);
 
             var annotation2 = varDeclStatement.Declaration.Variables[0].Annotations.Annotations[1];
@@ -492,7 +492,7 @@ Texture2D MyTex < TEX_COMP_FULL(dxt5, true) >;
             Assert.NotNull(annotation2.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, annotation2.Declaration.Variables[0].Initializer.Kind);
             Assert.Equal(SyntaxKind.StringLiteralExpression, ((EqualsValueClauseSyntax)annotation2.Declaration.Variables[0].Initializer).Value.Kind);
-            Assert.Equal(1, ((StringLiteralExpressionSyntax)((EqualsValueClauseSyntax)annotation2.Declaration.Variables[0].Initializer).Value).Tokens.Count);
+            Assert.Single(((StringLiteralExpressionSyntax)((EqualsValueClauseSyntax)annotation2.Declaration.Variables[0].Initializer).Value).Tokens);
             Assert.Equal("\"true\"", ((StringLiteralExpressionSyntax)((EqualsValueClauseSyntax)annotation2.Declaration.Variables[0].Initializer).Value).Tokens[0].Text);
 
             Assert.Null(varDeclStatement.Declaration.Variables[0].Initializer);
@@ -516,9 +516,9 @@ string Bar = FOO(some/thing);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedScalarType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, ((ScalarTypeSyntax) varDeclStatement.Declaration.Type).TypeTokens.Count);
+            Assert.Single(((ScalarTypeSyntax) varDeclStatement.Declaration.Type).TypeTokens);
             Assert.Equal("string", ((ScalarTypeSyntax) varDeclStatement.Declaration.Type).TypeTokens[0].Text);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("Bar", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.NotNull(varDeclStatement.Declaration.Variables[0].Initializer);
             Assert.Equal(SyntaxKind.EqualsValueClause, varDeclStatement.Declaration.Variables[0].Initializer.Kind);
@@ -547,7 +547,7 @@ TEX2D(MyTexture);
 
             var varDeclStatement = (VariableDeclarationStatementSyntax)node.ChildNodes[0];
             Assert.Equal(SyntaxKind.PredefinedObjectType, varDeclStatement.Declaration.Type.Kind);
-            Assert.Equal(1, varDeclStatement.Declaration.Variables.Count);
+            Assert.Single(varDeclStatement.Declaration.Variables);
             Assert.Equal("MyTexture2D", varDeclStatement.Declaration.Variables[0].Identifier.Text);
             Assert.Null(varDeclStatement.Declaration.Variables[0].Initializer);
         }
@@ -875,11 +875,11 @@ int a;
             Assert.Equal(SyntaxKind.DisabledTextTrivia, allTokens[0].LeadingTrivia[2].Kind);
             Assert.Equal(SyntaxKind.ElseDirectiveTrivia, allTokens[0].LeadingTrivia[3].Kind);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, allTokens[0].LeadingTrivia[4].Kind);
-            Assert.Equal(1, allTokens[0].TrailingTrivia.Length);
+            Assert.Single(allTokens[0].TrailingTrivia);
             Assert.Equal(SyntaxKind.IdentifierToken, allTokens[1].Kind);
             Assert.Equal(SyntaxKind.SemiToken, allTokens[2].Kind);
             Assert.Equal(SyntaxKind.EndOfFileToken, allTokens[3].Kind);
-            Assert.Equal(1, allTokens[3].LeadingTrivia.Length);
+            Assert.Single(allTokens[3].LeadingTrivia);
             Assert.Equal(SyntaxKind.EndIfDirectiveTrivia, allTokens[3].LeadingTrivia[0].Kind);
         }
 

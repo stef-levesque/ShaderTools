@@ -14,29 +14,28 @@ namespace ShaderTools.LanguageServer
             string logFilePath = null;
             var logLevel = LogLevel.Warning;
 
+            logFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ShaderTools");
+
             ArgumentSyntax.Parse(args, syntax =>
             {
                 syntax.DefineOption("launchdebugger", ref launchDebugger, false, "Set whether to launch the debugger or not.");
-                syntax.DefineOption("logfilepath", ref logFilePath, true, "Fully qualified path to the log file.");
+                //syntax.DefineOption("logfilepath", ref logFilePath, true, "Fully qualified path to the log file.");
                 syntax.DefineOption("loglevel", ref logLevel, x =>  (LogLevel) Enum.Parse(typeof(LogLevel), x), false, "Logging level.");
             });
 
             if (launchDebugger)
             {
-                // TODO: Doesn't work on .NET Core yet: https://github.com/dotnet/coreclr/issues/12074
                 Debugger.Launch();
             }
 
             LanguageServerHost languageServerHost = null;
             try
             {
-                languageServerHost = new LanguageServerHost(
+                languageServerHost = await LanguageServerHost.Create(
                     Console.OpenStandardInput(),
                     Console.OpenStandardOutput(),
                     logFilePath,
                     logLevel);
-
-                await languageServerHost.Initialize();
             }
             catch (Exception ex)
             {

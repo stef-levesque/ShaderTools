@@ -91,7 +91,7 @@ namespace ShaderTools.LanguageServer.Services.SignatureHelp
                         .Select(x => ConvertSignature(x, cancellationToken))
                         .ToArray(),
                     ActiveParameter = signatureHelpItems.ArgumentIndex,
-                    ActiveSignature = signatureHelpItems.SelectedItemIndex ?? 0 // TODO: Revert after https://github.com/OmniSharp/csharp-language-server-protocol/issues/82 is fixed
+                    ActiveSignature = signatureHelpItems.SelectedItemIndex
                 };
             }
             else
